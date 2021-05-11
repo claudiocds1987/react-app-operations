@@ -1,0 +1,9 @@
+#footer{
+    height: 100px;
+}
+
+#caca{
+    display: flex;
+    /* justify-content: center; */
+    align-content: center;
+}
