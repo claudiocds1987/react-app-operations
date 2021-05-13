@@ -39,7 +39,7 @@ const CreateOperation = () => {
 
   React.useEffect(() => {
     getCategories();
-    getOperations('ingreso');
+    getOperations();
   }, []);
 
   const getCategories = async () => {
@@ -49,9 +49,9 @@ const CreateOperation = () => {
     setStateCategories(categoriesData);
   };
 
-  const getOperations = async (type) => {
+  const getOperations = async () => {
     const data = await fetch(
-      `http://localhost:4000/api/operations/filter/clau@gmail.com/${type}`
+      'http://localhost:4000/api/operations/user/clau@gmail.com'
     );
     const operationsData = await data.json();
     console.log(operationsData);
