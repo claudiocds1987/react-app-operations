@@ -12,44 +12,61 @@ import "./OperationList.css";
 
 const OperationsList = (props) => {
 
+  const [stateFilter, setStateFilter] = React.useState([]);
   const [stateOperations, setStateOperations] = React.useState([]);
   const [checkCat, setCheckCat] = React.useState(false);
   const [stateType, setStateType] = React.useState("all");
   const [stateCategory, setStateCategory] = React.useState(1);
 
-  // guardo la data del props en el useState
   React.useEffect(() => {
-    // acordate que aca estan todas las operaciopnes de tipo "ingreso" de egreso no hay.
-    setStateOperations(props.operations);
-  }, [props.operations]);
+    getOperations();
+  }, []);
 
+  const getOperations = async () => {
+    const data = await fetch(
+      'http://localhost:4000/api/operations/user/clau@gmail.com'
+    );
+    const operationsData = await data.json();
+    console.log(operationsData);
+    setStateOperations(operationsData);
+    setStateFilter(operationsData);
+  };
 
   const filter = (e) => {
     if (checkCat) {
-      alert("filtra por categoria y tipo");
-      console.log("TYPE: " + stateType);
-      console.log("CATEGORIA: " + stateCategory);
+      // filter by type and category
+      let result;
 
-      // setStateOperations(prev => prev.filter(item => item.category === stateCategory && item.type === stateType));
+      if(stateType === 'all'){
+        result = stateOperations.filter(function (obj) {
+          return obj.category === stateCategory;
+        });
+      }else{
+        result = stateOperations.filter(function (obj) {
+          return obj.type === stateType && obj.category === stateCategory;
+        });
+      }
 
-      const result = stateOperations.filter(function (obj) {
-        return obj.type === stateType && obj.category === stateCategory;
-      });
-
-      setStateOperations(result);
+      setStateFilter(result);
       console.log(result);
 
     } else {
-      // filtrar solo por type
-      alert("filtra solo por tipo");
-      console.log("SOLO TYPE: " + stateType);
+      // filter only by type
 
-      const caca = stateOperations.filter(function (obj) {
-        return obj.type === stateType;
-      });
+      if(stateType === 'all'){
+        setStateFilter(stateOperations);
+      }else{
+        const result = stateOperations.filter(function (obj) {
+          return obj.type === stateType;
+        });
+        setStateFilter(result);
+      }
 
-      setStateOperations(caca);
-      console.log(caca);
+      // const result = stateOperations.filter(function (obj) {
+      //   return obj.type === stateType;
+      // });
+      // setStateFilter(result);
+      // console.log(result);
     }
   };
 
@@ -116,7 +133,7 @@ const OperationsList = (props) => {
             </tr>
           </thead>
           <tbody>
-            {stateOperations.map((item) => (
+            {stateFilter.map((item) => (
               <tr key={cont++}>
                 <td>
                   {moment(item.registration_date)

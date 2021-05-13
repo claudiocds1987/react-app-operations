@@ -30,32 +30,19 @@ const operation = {
 const CreateOperation = () => {
 
   const currentDate = new Date();
-
   const [stateCategories, setStateCategories] = React.useState([]);
-  const [stateOperations, setStateOperations] = React.useState([]);
   const [stateCategory, setStateCategory] = React.useState();
   const [date, setDate] = React.useState(new Date());
   const [type, setType] = React.useState("ingreso");
 
   React.useEffect(() => {
     getCategories();
-    getOperations();
   }, []);
 
   const getCategories = async () => {
     const data = await fetch("http://localhost:4000/api/categories");
     const categoriesData = await data.json();
-    //console.log(usersData);
     setStateCategories(categoriesData);
-  };
-
-  const getOperations = async () => {
-    const data = await fetch(
-      'http://localhost:4000/api/operations/user/clau@gmail.com'
-    );
-    const operationsData = await data.json();
-    console.log(operationsData);
-    setStateOperations(operationsData);
   };
 
   const {
@@ -69,8 +56,6 @@ const CreateOperation = () => {
 
   const onSubmit = (formData, e) => {
     e.preventDefault(); // evita que haga refresh
-    // console.log(formData);
-
     // charge data in operation object
     operation.userEmail = "clau@gmail.com";
     operation.concept = formData.concept;
@@ -87,8 +72,6 @@ const CreateOperation = () => {
       .post("http://localhost:4000/api/operations", operation)
       .then((resp) => {
         alert("La operación fue guardada exitosamente!");
-        // para actualizar la lista en componente OperationsList
-        getOperations('ingreso'); // tmb se podria mandar como parametro operation.type
       })
       .catch((err) => {
         alert("Error al intentar guardar la operación");
@@ -174,7 +157,7 @@ const CreateOperation = () => {
           </div>
         </div>
         <div className="col-md-7 mt-5">
-          <OperationsList operations={stateOperations} categories={stateCategories}/>
+          <OperationsList categories={stateCategories}/>
         </div>
       </div>
     </div>
