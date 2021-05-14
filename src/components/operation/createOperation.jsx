@@ -9,6 +9,9 @@ import * as yup from "yup";
 import DataPicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPen } from "@fortawesome/free-solid-svg-icons";
+
 // components
 import OperationsList from "./OperationsList";
 
@@ -28,7 +31,6 @@ const operation = {
 };
 
 const CreateOperation = () => {
-
   const currentDate = new Date();
   const [stateCategories, setStateCategories] = React.useState([]);
   const [stateCategory, setStateCategory] = React.useState();
@@ -79,12 +81,11 @@ const CreateOperation = () => {
   };
 
   const onChangeDate = (date) => {
-
-    if(date > currentDate){
-      alert('No puede elegir una fecha mayor a la fecha actual')
-    }else{
+    if (date > currentDate) {
+      alert("No puede elegir una fecha mayor a la fecha actual");
+    } else {
       setDate(date);
-    }  
+    }
   };
 
   return (
@@ -95,13 +96,18 @@ const CreateOperation = () => {
             <div className="card-body">
               <h5 className="text-center mb-3">NEW OPERATION</h5>
               <form onSubmit={handleSubmit(onSubmit)}>
-                <input
-                  type="text"
-                  name="concept"
-                  {...register("concept")}
-                  placeholder="Concepto..."
-                  className="form-control"
-                />
+                <div className="d-flex align-items-center">
+                  <div><FontAwesomeIcon icon={faPen}/></div>
+                  
+                  <input
+                    type="text"
+                    name="concept"
+                    {...register("concept")}
+                    placeholder="Concepto..."
+                    className="form-control"
+                  />
+                </div>
+
                 <p className="text-danger">{errors.concept?.message}</p>
 
                 <input
@@ -148,7 +154,7 @@ const CreateOperation = () => {
 
                 <div className="d-grid gap-2">
                   <button type="submit" className="btn btn-primary mt-5">
-                    Enviar
+                    Save
                   </button>
                 </div>
               </form>
@@ -157,7 +163,7 @@ const CreateOperation = () => {
           </div>
         </div>
         <div className="col-md-7 mt-5">
-          <OperationsList categories={stateCategories}/>
+          <OperationsList categories={stateCategories} />
         </div>
       </div>
     </div>

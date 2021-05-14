@@ -1,12 +1,13 @@
 import React from "react";
-import { Table, Form } from "react-bootstrap";
+// axios
+import axios from "axios";
+import { Table, Form, Spinner } from "react-bootstrap";
 // npm install moment --save to format date
 import moment from "moment";
 // fontawesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faEdit, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
 import { Fragment } from "react";
-
 // css
 import "./OperationList.css";
 
@@ -17,19 +18,26 @@ const OperationsList = (props) => {
   const [checkCat, setCheckCat] = React.useState(false);
   const [stateType, setStateType] = React.useState("all");
   const [stateCategory, setStateCategory] = React.useState(1);
-
+  const [loading, setLoading] = React.useState(false);
+  
   React.useEffect(() => {
     getOperations();
   }, []);
 
   const getOperations = async () => {
-    const data = await fetch(
-      'http://localhost:4000/api/operations/user/clau@gmail.com'
-    );
-    const operationsData = await data.json();
-    console.log(operationsData);
-    setStateOperations(operationsData);
-    setStateFilter(operationsData);
+    try {
+      const data = await axios
+      .get('http://localhost:4000/api/operations/user/clau@gmail.com')
+      .then(res => {
+        console.log(res);
+        setStateOperations(res.data)
+        setStateFilter(res.data);
+      });
+      setLoading(true);
+    } catch (e) {
+      console.log(e);
+    }
+
   };
 
   const filter = (e) => {
@@ -52,7 +60,6 @@ const OperationsList = (props) => {
 
     } else {
       // filter only by type
-
       if(stateType === 'all'){
         setStateFilter(stateOperations);
       }else{
@@ -61,12 +68,6 @@ const OperationsList = (props) => {
         });
         setStateFilter(result);
       }
-
-      // const result = stateOperations.filter(function (obj) {
-      //   return obj.type === stateType;
-      // });
-      // setStateFilter(result);
-      // console.log(result);
     }
   };
 
@@ -74,6 +75,8 @@ const OperationsList = (props) => {
 
   return (
     <Fragment>
+      {loading ? setStateFilter : <Spinner animation="border" />}
+      
       <div id="box-check">
         <div className="d-flex mb-3">
           <Form.Check label="Tipo:" checked className="mt-1" />
@@ -115,16 +118,16 @@ const OperationsList = (props) => {
             ))}
           </select>
         </div>
-        <button className="btn btn-info" onClick={filter}>
-          search
+        <button className="btn btn-info my-3" onClick={filter}>
+          Filtrar
         </button>
       </div>
 
       <div className="table-responsive">
         <Table striped bordered hover size="sm">
           <thead>
-            <tr>
-              <th>Fecha</th>
+            <tr className="text-center">
+              <th><button id="btn-refreshTable"><FontAwesomeIcon icon={faSyncAlt} onClick={getOperations}/></button><span className="mx-2">Fecha</span></th>
               <th>Concepto</th>
               <th>Monto</th>
               <th>Tipo</th>
@@ -134,7 +137,7 @@ const OperationsList = (props) => {
           </thead>
           <tbody>
             {stateFilter.map((item) => (
-              <tr key={cont++}>
+              <tr key={cont++} className="text-center">
                 <td>
                   {moment(item.registration_date)
                     .subtract(10, "days")
