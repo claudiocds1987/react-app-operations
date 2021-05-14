@@ -10,7 +10,15 @@ import DataPicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPen,
+  faHandHoldingUsd,
+  faCalendarDay,
+  faWallet,
+} from "@fortawesome/free-solid-svg-icons";
+
+// css
+import "./createOperation.css";
 
 // components
 import OperationsList from "../operationsList/OperationsList";
@@ -97,8 +105,9 @@ const CreateOperation = () => {
               <h5 className="text-center mb-3">NEW OPERATION</h5>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="d-flex align-items-center">
-                  <div><FontAwesomeIcon icon={faPen}/></div>
-                  
+                  <div className="icon">
+                    <FontAwesomeIcon icon={faPen} />
+                  </div>
                   <input
                     type="text"
                     name="concept"
@@ -110,47 +119,64 @@ const CreateOperation = () => {
 
                 <p className="text-danger">{errors.concept?.message}</p>
 
-                <input
-                  type="text"
-                  name="amount"
-                  {...register("amount")}
-                  placeholder="Monto"
-                  className="form-control"
-                />
+                <div className="d-flex align-items-center">
+                  <div className="icon">
+                    <FontAwesomeIcon icon={faHandHoldingUsd} />
+                  </div>
+                  <input
+                    type="text"
+                    name="amount"
+                    {...register("amount")}
+                    placeholder="Monto"
+                    className="form-control"
+                  />
+                </div>
+
                 <p className="text-danger">{errors.amount?.message}</p>
 
-                <DataPicker
-                  selected={date}
-                  onChange={onChangeDate}
-                  className="form-control"
-                  name="date"
-                />
+                <div className="d-flex align-items-center">
+                  <div className="icon">
+                    <FontAwesomeIcon icon={faCalendarDay} />
+                  </div>
+                  <DataPicker
+                    selected={date}
+                    onChange={onChangeDate}
+                    className="form-control"
+                    name="date"
+                  />
+                </div>
 
-                <select
-                  className="form-select mt-3"
-                  value={type}
-                  onChange={(e) => {
-                    const selectedType = e.target.value;
-                    setType(selectedType);
-                  }}
-                >
-                  <option value="ingreso">Ingreso</option>
-                  <option value="egreso">Egreso</option>
-                </select>
+                <div className="d-flex align-items-center mt-3">
+                  <label className="text-muted">Tipo:</label>
+                  <select
+                    className="form-select"
+                    value={type}
+                    onChange={(e) => {
+                      const selectedType = e.target.value;
+                      setType(selectedType);
+                    }}
+                  >
+                    <option value="ingreso">Ingreso</option>
+                    <option value="egreso">Egreso</option>
+                  </select>
+                </div>
 
-                <select
-                  className="form-select mt-3"
-                  onChange={(e) => {
-                    const selectedCategory = e.target.value;
-                    setStateCategory(selectedCategory);
-                  }}
-                >
-                  {stateCategories.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="d-flex align-items-center mt-3">
+                <label className="text-muted">Categoria:</label>
+                  <select
+                    className="form-select"
+                    onChange={(e) => {
+                      const selectedCategory = e.target.value;
+                      setStateCategory(selectedCategory);
+                    }}
+                  >
+                    {stateCategories.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
                 <div className="d-grid gap-2">
                   <button type="submit" className="btn btn-primary mt-5">

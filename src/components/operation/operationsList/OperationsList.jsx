@@ -137,7 +137,7 @@ const OperationsList = (props) => {
           </thead>
           <tbody>
             {stateFilter.map((item) => (
-              <tr key={cont++} className="text-center">
+              <tr key={cont++} className="text-center align-middle">
                 <td>
                   {moment(item.registration_date)
                     .subtract(10, "days")

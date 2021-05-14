@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="light" expand="lg" fixed="top">
       <Container>
           <Link to="/home" className="navbar-brand">
             Operations App
@@ -27,7 +27,7 @@ const Header = () => {
                 <FontAwesomeIcon icon={faHome} /> Home
               </Link>
               <Link className="nav-link" to="/createOperation">
-                <FontAwesomeIcon icon={faPlusCircle} /> New Operation
+                <FontAwesomeIcon icon={faPlusCircle} /> Operation
               </Link>
               <Link className="nav-link" to="/login">
                 <FontAwesomeIcon icon={faUser} /> Login
