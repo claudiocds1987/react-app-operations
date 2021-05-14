@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
 import { Fragment } from "react";
 // css
-import "./OperationList.css";
+import "./OperationsList.css";
 
 const OperationsList = (props) => {
 

@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // components
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
-import CreateOperation from "./components/operation/createOperation";
+import CreateOperation from "./components/operation/createOperation/createOperation";
 import Login from "./components/auth/Login";
 import Footer from "./components/footer/Footer";
 

@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 
 // components
-import OperationsList from "./OperationsList";
+import OperationsList from "../operationsList/OperationsList";
 
 const schema = yup.object().shape({
   concept: yup.string().required("Campo obligatorio"),
