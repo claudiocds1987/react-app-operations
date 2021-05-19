@@ -24,7 +24,7 @@ const OperationsList = (props) => {
   const [stateOperations, setStateOperations] = React.useState([]);
   const [checkCat, setCheckCat] = React.useState(false);
   const [stateType, setStateType] = React.useState("all");
-  const [stateCategory, setStateCategory] = React.useState(1);
+  const [stateCategory, setStateCategory] = React.useState('comida');
   const [checkDate, setCheckDate] = React.useState(false); // ?
   const [date1, setDate1] = React.useState(new Date()); // ?
   const [date2, setDate2] = React.useState(new Date()); // ?
@@ -111,12 +111,13 @@ const OperationsList = (props) => {
         }
       }
     } else if (!checkDate && checkCat) {
-      // filter by type and category
+      // filter by only by category
       if (stateType === "all") {
         result = stateOperations.filter(function (obj) {
           return obj.category === stateCategory;
         });
       } else {
+        alert('entro aca');
         result = stateOperations.filter(function (obj) {
           return obj.type === stateType && obj.category === stateCategory;
         });
@@ -131,7 +132,6 @@ const OperationsList = (props) => {
         });
       }
     }
-
     setStateFilter(result);
   };
 
@@ -177,9 +177,8 @@ const OperationsList = (props) => {
             <option value="egreso">Egreso</option>
           </select>
         </div>
-        <div className="d-flex">
+        <div className="d-flex mb-3">
           <Form.Check
-            className="mt-1"
             label="Categoria:"
             checked={checkCat}
             onChange={(e) => {
@@ -189,6 +188,7 @@ const OperationsList = (props) => {
           <select
             // se muestra cuando el check category esta checked
             hidden={!checkCat}
+            //disabled={!checkCat}
             className="form-select"
             onChange={(e) => {
               const selectedCategory = e.target.value;
@@ -202,19 +202,19 @@ const OperationsList = (props) => {
             ))}
           </select>
         </div>
+      </div>
 
-        <div className="mt-3">
+      <div id="box-date-range">
           <Form.Check
             label="Fecha:"
-            className="mt-1"
             onChange={(e) => {
               setCheckDate(!checkDate);
             }}
           />
           <div hidden={!checkDate}>
-            <div className="d-flex mt-2">
-              <label>Desde: </label>
+            <div className="d-flex">
               <DataPicker
+                //disabled={!checkDate}
                 dateFormat="dd/MM/yyyy"
                 selected={date1}
                 onChange={onChangeDate1}
@@ -223,6 +223,7 @@ const OperationsList = (props) => {
               />
               <label>Hasta: </label>
               <DataPicker
+                //disabled={!checkDate}
                 dateFormat="dd/MM/yyyy"
                 selected={date2}
                 onChange={onChangeDate2}
@@ -231,12 +232,11 @@ const OperationsList = (props) => {
               />
             </div>
           </div>
-        </div>
+        </div>       
 
-        <button className="btn btn-info my-3" onClick={filter}>
+      <button className="btn btn-info my-3 table" onClick={filter}>
           Filtrar
-        </button>
-      </div>
+      </button>
 
       <div className="table-responsive">
         <Table striped bordered hover variant="dark" size="sm">
