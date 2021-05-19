@@ -56,8 +56,7 @@ const OperationsList = (props) => {
     }
   };
 
-  // ???????????????????????????????????????????????????
-  const caca = () => {
+  const filter = () => {
     let result;
     if (checkDate) {
       // format dates from useState to shortDate
@@ -74,21 +73,42 @@ const OperationsList = (props) => {
       }));
 
       if (checkCat) {
-        // filter by range of dates and type and category
-        result = formatedDates.filter(function (obj) {
-          return (
-            obj.type === stateType && obj.category === stateCategory &&
-            obj.date >= startDate && obj.date <= endDate
-          );
-        });
+        if (stateType === "all") {
+          // filter by date range and category
+          result = formatedDates.filter(function (obj) {
+            return (
+              obj.category === stateCategory &&
+              obj.date >= startDate &&
+              obj.date <= endDate
+            );
+          });
+        } else {
+          // filter date range and type and category
+          result = formatedDates.filter(function (obj) {
+            return (
+              obj.type === stateType &&
+              obj.category === stateCategory &&
+              obj.date >= startDate &&
+              obj.date <= endDate
+            );
+          });
+        }
       } else {
-        // filter by range of dates and type
-        result = formatedDates.filter(function (obj) {
-          return (
-            obj.type === stateType &&
-            obj.date >= startDate && obj.date <= endDate
-          );
-        });
+        if (stateType === "all") {
+          // filter only by date range
+          result = formatedDates.filter(function (obj) {
+            return obj.date >= startDate && obj.date <= endDate;
+          });
+        } else {
+          // filter by date range and type
+          result = formatedDates.filter(function (obj) {
+            return (
+              obj.type === stateType &&
+              obj.date >= startDate &&
+              obj.date <= endDate
+            );
+          });
+        }
       }
     } else if (!checkDate && checkCat) {
       // filter by type and category
@@ -114,63 +134,8 @@ const OperationsList = (props) => {
 
     setStateFilter(result);
   };
-  // ???????????????????????????????????????????????????
-
-  const filter = (e) => {
-    if (checkCat) {
-      // filter by type and category
-      let result;
-
-      if (stateType === "all") {
-        result = stateOperations.filter(function (obj) {
-          return obj.category === stateCategory;
-        });
-      } else {
-        result = stateOperations.filter(function (obj) {
-          return obj.type === stateType && obj.category === stateCategory;
-        });
-      }
-      setStateFilter(result);
-    } else {
-      // filter only by type
-      if (stateType === "all") {
-        setStateFilter(stateOperations);
-      } else {
-        const result = stateOperations.filter(function (obj) {
-          return obj.type === stateType;
-        });
-        setStateFilter(result);
-      }
-    }
-  };
 
   let cont = 1;
-
-  // ****************************************************************************
-  // const cheto = () => {
-  //   let startDate = moment(date1).format("MM/DD/YYYY");
-  //   let endDate = moment(date2).format("MM/DD/YYYY");
-
-  //   // format dates to shortDate
-  //   const formatedDates = stateOperations.map((elem) => ({
-  //     amount: elem.amount,
-  //     category: elem.category,
-  //     concept: elem.concept,
-  //     date: moment(elem.date).format("MM/DD/YYYY"),
-  //     id_operation: elem.id_operation,
-  //     type: elem.type,
-  //   }));
-
-  //   // filter by range of dates and type operation
-  //   const resultDate = formatedDates.filter(function (obj) {
-  //     return (
-  //       obj.type === stateType && obj.date >= startDate && obj.date <= endDate
-  //     );
-  //   });
-
-  //   setStateFilter(resultDate);
-  //   console.log(resultDate);
-  // };
 
   const onChangeDate1 = (date) => {
     if (date > currentDate) {
@@ -268,7 +233,7 @@ const OperationsList = (props) => {
           </div>
         </div>
 
-        <button className="btn btn-info my-3" onClick={caca}>
+        <button className="btn btn-info my-3" onClick={filter}>
           Filtrar
         </button>
       </div>
