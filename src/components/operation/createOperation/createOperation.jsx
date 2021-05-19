@@ -13,8 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPen,
   faHandHoldingUsd,
-  faCalendarDay,
-  faWallet,
+  faCalendarDay
 } from "@fortawesome/free-solid-svg-icons";
 
 // css
@@ -117,7 +116,12 @@ const CreateOperation = () => {
                   />
                 </div>
 
-                <p className="text-danger">{errors.concept?.message}</p>
+                <p className="text-center">
+                  <span 
+                    className="small text-danger">
+                      {errors.concept?.message}
+                  </span>
+                </p>
 
                 <div className="d-flex align-items-center">
                   <div className="icon">
@@ -132,7 +136,11 @@ const CreateOperation = () => {
                   />
                 </div>
 
-                <p className="text-danger">{errors.amount?.message}</p>
+                <p className="text-center">
+                  <span className="small text-danger">
+                    {errors.amount?.message}
+                  </span>
+                </p>
 
                 <div className="d-flex align-items-center">
                   <div className="icon">

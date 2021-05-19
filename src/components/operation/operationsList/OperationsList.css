@@ -12,3 +12,12 @@ thead{
     background-color: transparent;
     color: white;
 }
+
+
+@media (min-width:700px) {
+    select{
+        width: 120px !important;
+    }
+}
+
+

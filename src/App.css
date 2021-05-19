@@ -1,3 +1,5 @@
-.box{
-    min-height: 100vh;
+.box {
+  min-height: 100vh;
+  margin-top: 60px; 
+  background: #8fe0f5;
 }
