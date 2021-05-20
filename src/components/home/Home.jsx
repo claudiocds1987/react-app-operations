@@ -153,9 +153,25 @@ const Home = () => {
     }
   };
 
+  const Delete = async (id_operation) => {
+    const confirm = window.confirm("¿Realmente quiere eliminar la operación?");
+    if (confirm) {
+      try {
+        const data = await axios
+          .put(`http://localhost:4000/api/operations/delete/${id_operation}`)
+          .then((res) => {
+            alert('La operación fue eliminada');
+            getOperations();
+          });
+        setLoading(true);
+      } catch (e) {
+        alert("Error al eliminar la operación");
+      }
+    }
+  };
+
   return (
     <div className="container">
-      
       {loading ? setStateFilter : <Spinner animation="border" />}
 
       <div id="filter-container">
@@ -269,7 +285,12 @@ const Home = () => {
                   <button className="btn btn-primary">
                     <FontAwesomeIcon icon={faEdit} />
                   </button>
-                  <button className="btn btn-danger">
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => {
+                      Delete(item.id_operation);
+                    }}
+                  >
                     <FontAwesomeIcon icon={faTrash} />
                   </button>
                 </div>
