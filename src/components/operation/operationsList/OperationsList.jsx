@@ -4,10 +4,6 @@ import axios from "axios";
 import { Table, Form, Spinner } from "react-bootstrap";
 // npm install moment --save to format date
 import moment from "moment";
-
-// npm install date-fns to format date
-import { format, parseISO } from "date-fns";
-
 // fontawesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faEdit, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
@@ -24,18 +20,11 @@ const OperationsList = (props) => {
   const [stateOperations, setStateOperations] = React.useState([]);
   const [checkCat, setCheckCat] = React.useState(false);
   const [stateType, setStateType] = React.useState("all");
-  const [stateCategory, setStateCategory] = React.useState('comida');
-  const [checkDate, setCheckDate] = React.useState(false); // ?
-  const [date1, setDate1] = React.useState(new Date()); // ?
-  const [date2, setDate2] = React.useState(new Date()); // ?
+  const [stateCategory, setStateCategory] = React.useState("comida");
+  const [checkDate, setCheckDate] = React.useState(false);
+  const [date1, setDate1] = React.useState(new Date());
+  const [date2, setDate2] = React.useState(new Date());
   const [loading, setLoading] = React.useState(false);
-
-  // const shortDateFormat = (date) => {
-  //   const month = currentDate.getMonth() + 1;
-  //   const day = currentDate.getDay();
-  //   const year = currentDate.getFullYear();
-  //   const shortDate = month + "/" + day + "/" + year;
-  // }
 
   React.useEffect(() => {
     getOperations();
@@ -117,7 +106,7 @@ const OperationsList = (props) => {
           return obj.category === stateCategory;
         });
       } else {
-        alert('entro aca');
+        alert("entro aca");
         result = stateOperations.filter(function (obj) {
           return obj.type === stateType && obj.category === stateCategory;
         });
@@ -161,60 +150,61 @@ const OperationsList = (props) => {
     <Fragment>
       {loading ? setStateFilter : <Spinner animation="border" />}
 
-      <div id="box-check">
-        <div className="d-flex mb-3">
-          <Form.Check label="Tipo:" checked className="mt-1" />
-          <select
-            className="form-select"
-            value={stateType}
-            onChange={(e) => {
-              const selectedType = e.target.value;
-              setStateType(selectedType);
-            }}
-          >
-            <option value="all">Todas</option>
-            <option value="ingreso">Ingreso</option>
-            <option value="egreso">Egreso</option>
-          </select>
+      <div id="filter-contain">
+        <div id="box-check">
+          <div className="d-flex mb-3">
+            <Form.Check label="Tipo:" checked className="mt-1" />
+            <select
+              className="form-select"
+              value={stateType}
+              onChange={(e) => {
+                const selectedType = e.target.value;
+                setStateType(selectedType);
+              }}
+            >
+              <option value="all">Todas</option>
+              <option value="ingreso">Ingreso</option>
+              <option value="egreso">Egreso</option>
+            </select>
+          </div>
+          <div className="d-flex mb-3">
+            <Form.Check
+              label="Categoria:"
+              checked={checkCat}
+              onChange={(e) => {
+                setCheckCat(!checkCat);
+              }}
+            />
+            <select
+              // se muestra cuando el check category esta checked
+              //hidden={!checkCat}
+              disabled={!checkCat}
+              className="form-select"
+              onChange={(e) => {
+                const selectedCategory = e.target.value;
+                setStateCategory(selectedCategory);
+              }}
+            >
+              {props.categories.map((item) => (
+                <option key={item.id} value={item.name}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-        <div className="d-flex mb-3">
-          <Form.Check
-            label="Categoria:"
-            checked={checkCat}
-            onChange={(e) => {
-              setCheckCat(!checkCat);
-            }}
-          />
-          <select
-            // se muestra cuando el check category esta checked
-            hidden={!checkCat}
-            //disabled={!checkCat}
-            className="form-select"
-            onChange={(e) => {
-              const selectedCategory = e.target.value;
-              setStateCategory(selectedCategory);
-            }}
-          >
-            {props.categories.map((item) => (
-              <option key={item.id} value={item.name}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
 
-      <div id="box-date-range">
+        <div id="box-date-range">
           <Form.Check
             label="Fecha:"
             onChange={(e) => {
               setCheckDate(!checkDate);
             }}
           />
-          <div hidden={!checkDate}>
+          <div>
             <div className="d-flex">
               <DataPicker
-                //disabled={!checkDate}
+                disabled={!checkDate}
                 dateFormat="dd/MM/yyyy"
                 selected={date1}
                 onChange={onChangeDate1}
@@ -223,7 +213,7 @@ const OperationsList = (props) => {
               />
               <label>Hasta: </label>
               <DataPicker
-                //disabled={!checkDate}
+                disabled={!checkDate}
                 dateFormat="dd/MM/yyyy"
                 selected={date2}
                 onChange={onChangeDate2}
@@ -232,11 +222,18 @@ const OperationsList = (props) => {
               />
             </div>
           </div>
-        </div>       
+        </div>
 
-      <button className="btn btn-info my-3 table" onClick={filter}>
-          Filtrar
-      </button>
+        <div className="text-center">
+          <button
+            id="btn-filtrar"
+            className="btn my-3 table"
+            onClick={filter}
+          >
+            Filtrar
+          </button>
+        </div>
+      </div>
 
       <div className="table-responsive">
         <Table striped bordered hover variant="dark" size="sm">
@@ -259,7 +256,6 @@ const OperationsList = (props) => {
             {stateFilter.map((item) => (
               <tr key={cont++} className="text-center align-middle">
                 <td>{moment(item.date).format("DD/MM/YYYY")}</td>
-                {/* <td>{JSON.stringify(item.date)}</td> */}
                 <td>{item.concept}</td>
                 <td>{item.amount}</td>
                 <td>{item.type}</td>
