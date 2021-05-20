@@ -177,8 +177,8 @@ const Home = () => {
       <div id="filter-container">
         <div id="secondary-container">
           <div id="box-check">
-            <div className="d-flex mb-3">
-              <Form.Check label="Tipo:" checked className="mt-1" />
+            <div className="d-flex mb-3 align-items-center">
+              <Form.Check label="Tipo:" checked />
               <select
                 className="form-select"
                 value={stateType}
@@ -192,7 +192,7 @@ const Home = () => {
                 <option value="egreso">Egreso</option>
               </select>
             </div>
-            <div className="d-flex mb-3" id="box-category">
+            <div className="d-flex mb-3 align-items-center" id="box-category">
               <Form.Check
                 label="Categoria:"
                 checked={checkCat}
@@ -218,15 +218,15 @@ const Home = () => {
             </div>
           </div>
 
-          <div id="box-date-range">
+          <div id="box-date-range" className="d-flex mb-3 align-items-center">
             <Form.Check
               label="Fecha:"
               onChange={(e) => {
                 setCheckDate(!checkDate);
               }}
             />
-            <div>
-              <div className="d-flex">
+            {/* <div> */}
+              {/* <div className="d-flex"> */}
                 <DataPicker
                   disabled={!checkDate}
                   dateFormat="dd/MM/yyyy"
@@ -244,8 +244,8 @@ const Home = () => {
                   className="form-control"
                   name="date2"
                 />
-              </div>
-            </div>
+              {/* </div> */}
+            {/* </div> */}
           </div>
         </div>
 
