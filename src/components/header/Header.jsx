@@ -11,15 +11,27 @@ import {
 import { Navbar, Nav, Container } from "react-bootstrap";
 
 // npm install react-router-dom
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 // css
 import "./header.css";
 
 const Header = () => {
-  return (
+
+  const [user, setUser] = React.useState('');
+
+  React.useEffect(() => {
+    if(localStorage.getItem("user") !== null){
+      setUser(localStorage.getItem("user"));
+    }  
+  });
+
+  let history = useHistory();
+
+  return ( 
     <Navbar id="navBar" expand="lg" fixed="top">
       <Container>
-        <img src="https://logobly.com/wp-content/uploads/001-rocket-1.png"/>
+        <img src="https://logobly.com/wp-content/uploads/001-rocket-1.png" />
+        <p className="text-white">{user}</p>
         <Link to="/home" style={{ color: "#FFF" }} className="navbar-brand">
           Operations App
         </Link>
@@ -27,7 +39,10 @@ const Header = () => {
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <Nav>
             <Link className="nav-link" to="/home" style={{ color: "#FFF" }}>
-              <FontAwesomeIcon icon={faHome} style={{ color: "red", marginRight: "10px" }} />
+              <FontAwesomeIcon
+                icon={faHome}
+                style={{ color: "red", marginRight: "10px" }}
+              />
               Home
             </Link>
             <Link
@@ -43,10 +58,16 @@ const Header = () => {
             </Link>
             <Link
               className="nav-link link"
-              to="/login"
+              // to="/login"
+              onClick={() => {
+                window.location.reload(history.push("/login"));
+              }}
               style={{ color: "#FFF" }}
             >
-              <FontAwesomeIcon icon={faUser} style={{ color: "yellow", marginRight: "10px" }} />
+              <FontAwesomeIcon
+                icon={faUser}
+                style={{ color: "yellow", marginRight: "10px" }}
+              />
               Login
             </Link>
           </Nav>

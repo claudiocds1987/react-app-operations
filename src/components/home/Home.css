@@ -1,9 +1,10 @@
 #filter-container{
     padding: 10px;
-    background:#ffffff;
+    /* background:#ffffff; */
+    background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
     margin-top: 80px;
   }
-  
+
   #btn-filtrar{
     background: #5eba7d;
     color: white;
@@ -11,6 +12,7 @@
   
   label {
     margin-right: 8px !important;
+    color: white;
   }
   
   thead {
@@ -43,10 +45,6 @@
       margin-left: 15px;
       margin-left: 15px;
     }
-  
-    /* #box-date-range {
-      display: flex;
-    } */
   
     #btn-filtrar{
       width: 200px;

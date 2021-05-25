@@ -160,7 +160,7 @@ const Home = () => {
         const data = await axios
           .put(`http://localhost:4000/api/operations/delete/${id_operation}`)
           .then((res) => {
-            alert('La operación fue eliminada');
+            alert("La operación fue eliminada");
             getOperations();
           });
         setLoading(true);
@@ -172,6 +172,7 @@ const Home = () => {
 
   return (
     <div className="container">
+     
       {loading ? setStateFilter : <Spinner animation="border" />}
 
       <div id="filter-container">
@@ -225,27 +226,24 @@ const Home = () => {
                 setCheckDate(!checkDate);
               }}
             />
-            {/* <div> */}
-              {/* <div className="d-flex"> */}
-                <DataPicker
-                  disabled={!checkDate}
-                  dateFormat="dd/MM/yyyy"
-                  selected={date1}
-                  onChange={onChangeDate1}
-                  className="form-control"
-                  name="date1"
-                />
-                <label>Hasta: </label>
-                <DataPicker
-                  disabled={!checkDate}
-                  dateFormat="dd/MM/yyyy"
-                  selected={date2}
-                  onChange={onChangeDate2}
-                  className="form-control"
-                  name="date2"
-                />
-              {/* </div> */}
-            {/* </div> */}
+
+            <DataPicker
+              disabled={!checkDate}
+              dateFormat="dd/MM/yyyy"
+              selected={date1}
+              onChange={onChangeDate1}
+              className="form-control"
+              name="date1"
+            />
+            <label className="mx-2">Hasta: </label>
+            <DataPicker
+              disabled={!checkDate}
+              dateFormat="dd/MM/yyyy"
+              selected={date2}
+              onChange={onChangeDate2}
+              className="form-control"
+              name="date2"
+            />
           </div>
         </div>
 
