@@ -1,5 +1,7 @@
 import React from "react";
-import axios from "axios";
+//import axios from "axios";
+// spinner loader
+import { Spinner } from "react-bootstrap";
 // npm install react-hook-form
 import { useForm } from "react-hook-form";
 // npm install @hookform/resolvers yup (para las validaciones)
@@ -20,7 +22,10 @@ import {
 import "./createOperation.css";
 
 // components
-import OperationsList from "../operationsList/OperationsList";
+//import OperationsList from "../operationsList/OperationsList";
+
+// services
+import OperationsService from "./../../../services/operationsService";
 
 const schema = yup.object().shape({
   concept: yup.string().required("Campo obligatorio"),
@@ -40,11 +45,12 @@ const operation = {
 const CreateOperation = () => {
   const currentDate = new Date();
   const [stateCategories, setStateCategories] = React.useState([]);
-  const [stateCategory, setStateCategory] = React.useState();
+  const [stateCategory, setStateCategory] = React.useState(1);
   const [date, setDate] = React.useState(new Date());
   const [type, setType] = React.useState("ingreso");
   const [user, setUser] = React.useState("");
- 
+  const [loading, setLoading] = React.useState(false);
+
   React.useEffect(() => {
     if(localStorage.getItem("user") !== null){
       setUser(localStorage.getItem("user"));
@@ -70,25 +76,33 @@ const CreateOperation = () => {
   const onSubmit = (formData, e) => {
     e.preventDefault(); // evita que haga refresh
     // charge data in operation object
+    setLoading(true);
     operation.userEmail = user;
     operation.concept = formData.concept;
     operation.amount = formData.amount;
     operation.date = date;
     operation.category = stateCategory;
     operation.type = type;
-
     //console.log(operation);
     reset(); // reset viene del useForm
 
     // POST con axios
-    axios
-      .post("http://localhost:4000/api/operations", operation)
-      .then((resp) => {
-        alert("La operación fue guardada exitosamente!");
-      })
-      .catch((err) => {
-        alert("Error al intentar guardar la operación");
-      });
+    // axios
+    //   .post("http://localhost:4000/api/operations", operation)
+    //   .then((resp) => {
+    //     alert("La operación fue guardada exitosamente!");
+    //   })
+    //   .catch((err) => {
+    //     alert("Error al intentar guardar la operación");
+    //   });
+
+    let operationsService = new OperationsService();
+    const data = operationsService.createOperation(operation);
+    data.then(res => {
+      //setLoading(false);
+      alert(res);   
+    })
+    setLoading(false);
   };
 
   const onChangeDate = (date) => {
@@ -102,6 +116,7 @@ const CreateOperation = () => {
   return (
     <div className="container">
       <div className="d-flex justify-content-center">
+      {loading === true ? <Spinner animation="border" /> : ""}
         <div className="col-md-5 mt-5">
           <div className="card p-4">
             <div className="card-body">

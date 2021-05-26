@@ -14,8 +14,8 @@ import DataPicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 // css
 import "./Home.css";
-
-import OperationsService from "./../../operationsService"
+// services
+import OperationsService from "./../../services/operationsService"
 
 const Home = () => {
   const currentDate = new Date();
@@ -49,7 +49,7 @@ const Home = () => {
 
   const getOperations = async () => {
     let operationsService = new OperationsService();
-    const data = operationsService.getOperations(user);
+    const data = operationsService.getOperationsByUser(user);
     data.then(res => {
       console.log(res);
       setStateOperations(res);

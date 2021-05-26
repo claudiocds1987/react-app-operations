@@ -1,8 +1,7 @@
 import axios from "axios";
 
 class OperationsService {
- 
-  async getOperations(email) {
+  async getOperationsByUser(email) {
     try {
       const { data } = await axios({
         method: "get",
@@ -13,7 +12,16 @@ class OperationsService {
     } catch (e) {
       alert("Error al intentar obtener las operaciones");
     }
-    
+  }
+
+  async createOperation(operation) {
+    try {
+      let res = await axios.post("http://localhost:4000/api/operations", operation);
+      let data = res.data;
+      return data;
+    } catch (e) {
+      alert("Error al guardar la operación");
+    }
   }
 }
 
