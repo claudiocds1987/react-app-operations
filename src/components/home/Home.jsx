@@ -2,6 +2,8 @@ import React from "react";
 // axios
 import axios from "axios";
 import { Table, Form, Spinner } from "react-bootstrap";
+// npm install react-router-dom
+import { Link, useHistory } from "react-router-dom";
 // npm install moment --save to format date
 import moment from "moment";
 // fontawesome
@@ -27,7 +29,7 @@ const Home = () => {
   const [date1, setDate1] = React.useState(new Date());
   const [date2, setDate2] = React.useState(new Date());
   const [loading, setLoading] = React.useState(false);
-
+  let history = useHistory();
   let cont = 1;
   let user = '';
 
@@ -46,24 +48,30 @@ const Home = () => {
   };
 
   const getOperations = async () => {
-
-    // let operationsService = new OperationsService();
-    // const data = operationsService.getOperations();
-    // console.log(data);
-
-    try {
-      const data = await axios
-      .get(`http://localhost:4000/api/operations/user/${user}`)
-        // .get("http://localhost:4000/api/operations/user/clau@gmail.com")
-        .then((res) => {
-         // console.log(res);
-          setStateOperations(res.data);
-          setStateFilter(res.data);
-        });
+    let operationsService = new OperationsService();
+    const data = operationsService.getOperations(user);
+    data.then(res => {
+      console.log(res);
+      setStateOperations(res);
+      setStateFilter(res);
       setLoading(true);
-    } catch (e) {
-      alert("Error al intentar obtener las operaciones");
-    }
+    })
+    //setLoading(true);
+    // data.then(res => console.log(res));
+    //console.log(data);
+    // try {
+    //   const data = await axios
+    //   .get(`http://localhost:4000/api/operations/user/${user}`)
+    //     // .get("http://localhost:4000/api/operations/user/clau@gmail.com")
+    //     .then((res) => {
+    //      // console.log(res);
+    //       setStateOperations(res.data);
+    //       setStateFilter(res.data);
+    //     });
+    //   setLoading(true);
+    // } catch (e) {
+    //   alert("Error al intentar obtener las operaciones");
+    // }
   };
 
   const filter = () => {
@@ -291,7 +299,13 @@ const Home = () => {
                 <td>{item.type}</td>
                 <td>{item.category}</td>
                 <div className="text-center">
-                  <button className="btn btn-primary">
+                  <button 
+                    className="btn btn-primary"
+                    //to="/EditOperation" 
+                    onClick={() => {
+                      history.push(`/editOperation/${item.id_operation}`);
+                    }}
+                    >
                     <FontAwesomeIcon icon={faEdit} />
                   </button>
                   <button

@@ -1,4 +1,5 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 // npm install react-hook-form
 import { useForm } from "react-hook-form";
@@ -8,26 +9,19 @@ import * as yup from "yup";
 // npm i react-datepicker
 import DataPicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPen,
   faHandHoldingUsd,
-  faCalendarDay
+  faCalendarDay,
 } from "@fortawesome/free-solid-svg-icons";
-
-// css
-import "./createOperation.css";
-
-// components
-import OperationsList from "../operationsList/OperationsList";
 
 const schema = yup.object().shape({
   concept: yup.string().required("Campo obligatorio"),
   amount: yup.number().required("Campo obligatorio"),
 });
 
-const operation = {
+const op = {
   userEmail: "",
   concept: "",
   amount: "",
@@ -37,18 +31,23 @@ const operation = {
   state: true,
 };
 
-const CreateOperation = () => {
+const EditOperation = () => {
   const currentDate = new Date();
   const [stateCategories, setStateCategories] = React.useState([]);
   const [stateCategory, setStateCategory] = React.useState();
   const [date, setDate] = React.useState(new Date());
   const [type, setType] = React.useState("ingreso");
   const [user, setUser] = React.useState("");
- 
+  const [operation, setOperation] = React.useState([]);
+  //getting id_operation from url
+  const { id } = useParams();
+
   React.useEffect(() => {
-    if(localStorage.getItem("user") !== null){
+    console.log("id_operation: " + id);
+    if (localStorage.getItem("user") !== null) {
       setUser(localStorage.getItem("user"));
     }
+    getOperation();
     getCategories();
   }, []);
 
@@ -56,6 +55,21 @@ const CreateOperation = () => {
     const data = await fetch("http://localhost:4000/api/categories");
     const categoriesData = await data.json();
     setStateCategories(categoriesData);
+  };
+
+  const getOperation = async () => {
+    try {
+      const data = await axios
+        .get(`http://localhost:4000/api/operations/${id}`)
+        .then((res) => {
+          // MEJOR GUARDAR LA RESPUESTA EN EL OBJETO OPERATION
+          console.log(res.data)
+          setOperation(res.data);
+        });
+      //setLoading(true);
+    } catch (e) {
+      alert("Error al intentar obtener las operaciones");
+    }
   };
 
   const {
@@ -105,7 +119,8 @@ const CreateOperation = () => {
         <div className="col-md-5 mt-5">
           <div className="card p-4">
             <div className="card-body">
-              <h5 className="text-center mb-3">NEW OPERATION</h5>
+                <h5>{operation.concept}</h5>
+              <h5 className="text-center mb-3">EDIT OPERATION</h5>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="d-flex align-items-center">
                   <div className="icon">
@@ -121,9 +136,8 @@ const CreateOperation = () => {
                 </div>
 
                 <p className="text-center">
-                  <span 
-                    className="small text-danger">
-                      {errors.concept?.message}
+                  <span className="small text-danger">
+                    {errors.concept?.message}
                   </span>
                 </p>
 
@@ -174,7 +188,7 @@ const CreateOperation = () => {
                 </div>
 
                 <div className="d-flex align-items-center mt-3">
-                <label className="text-muted">Categoria:</label>
+                  <label className="text-muted">Categoria:</label>
                   <select
                     className="form-select"
                     onChange={(e) => {
@@ -196,16 +210,12 @@ const CreateOperation = () => {
                   </button>
                 </div>
               </form>
-              {/* {JSON.stringify(currentDate)} */}
             </div>
           </div>
         </div>
-        {/* <div className="col-md-7 mt-5">
-          <OperationsList categories={stateCategories} />
-        </div> */}
       </div>
     </div>
   );
 };
 
-export default CreateOperation;
+export default EditOperation;

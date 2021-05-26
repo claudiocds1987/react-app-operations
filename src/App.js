@@ -7,6 +7,7 @@ import Protected from "./components/auth/Protected"
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
 import CreateOperation from "./components/operation/createOperation/createOperation";
+import EditOperation from "./components/operation/editOperation/EditOperation";
 import Login from "./components/auth/login/Login";
 import SignUp from "./components/auth/signUp/SignUp";
 import Footer from "./components/footer/Footer";
@@ -34,6 +35,7 @@ function App() {
         
 
         <Route path="/createOperation" component={CreateOperation}></Route>
+        <Route path="/editOperation/:id" component={EditOperation}></Route>
         <Route path="/login" component={Login}></Route>
         <Route path="/signup" component={SignUp}></Route>
         
