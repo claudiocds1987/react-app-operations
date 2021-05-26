@@ -13,6 +13,8 @@ import "react-datepicker/dist/react-datepicker.css";
 // css
 import "./Home.css";
 
+import OperationsService from "./../../operationsService"
+
 const Home = () => {
   const currentDate = new Date();
   const [categories, setCategories] = React.useState([]);
@@ -27,8 +29,12 @@ const Home = () => {
   const [loading, setLoading] = React.useState(false);
 
   let cont = 1;
+  let user = '';
 
   React.useEffect(() => {
+    if(localStorage.getItem("user") !== null){
+      user = localStorage.getItem('user');
+    }
     getOperations();
     getCategories();
   }, []);
@@ -40,11 +46,17 @@ const Home = () => {
   };
 
   const getOperations = async () => {
+
+    // let operationsService = new OperationsService();
+    // const data = operationsService.getOperations();
+    // console.log(data);
+
     try {
       const data = await axios
-        .get("http://localhost:4000/api/operations/user/clau@gmail.com")
+      .get(`http://localhost:4000/api/operations/user/${user}`)
+        // .get("http://localhost:4000/api/operations/user/clau@gmail.com")
         .then((res) => {
-          console.log(res);
+         // console.log(res);
           setStateOperations(res.data);
           setStateFilter(res.data);
         });
@@ -115,7 +127,6 @@ const Home = () => {
           return obj.category === stateCategory;
         });
       } else {
-        alert("entro aca");
         result = stateOperations.filter(function (obj) {
           return obj.type === stateType && obj.category === stateCategory;
         });

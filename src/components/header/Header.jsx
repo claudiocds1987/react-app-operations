@@ -8,7 +8,7 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Nav, Container, Dropdown } from "react-bootstrap";
 
 // npm install react-router-dom
 import { Link, useHistory } from "react-router-dom";
@@ -16,28 +16,47 @@ import { Link, useHistory } from "react-router-dom";
 import "./header.css";
 
 const Header = () => {
-
-  const [user, setUser] = React.useState('');
+  const [user, setUser] = React.useState("");
 
   React.useEffect(() => {
-    if(localStorage.getItem("user") !== null){
+    if (localStorage.getItem("user") !== null) {
       setUser(localStorage.getItem("user"));
-    }  
+    }
   });
 
   let history = useHistory();
 
-  return ( 
+  return (
     <Navbar id="navBar" expand="lg" fixed="top">
       <Container>
         <img src="https://logobly.com/wp-content/uploads/001-rocket-1.png" />
-        <p className="text-white">{user}</p>
         <Link to="/home" style={{ color: "#FFF" }} className="navbar-brand">
           Operations App
         </Link>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+          {
+            user !== "" ? 
+            <Dropdown>
+              <Dropdown.Toggle variant="success" id="dropdown-basic">
+                {user}
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  onClick={() => {
+                    window.location.reload(history.push("/login"));
+                  }}
+                >
+                  Cerrar sesión
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+            :
+            ""
+          }
           <Nav>
+            
             <Link className="nav-link" to="/home" style={{ color: "#FFF" }}>
               <FontAwesomeIcon
                 icon={faHome}

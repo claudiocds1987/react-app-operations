@@ -43,8 +43,12 @@ const CreateOperation = () => {
   const [stateCategory, setStateCategory] = React.useState();
   const [date, setDate] = React.useState(new Date());
   const [type, setType] = React.useState("ingreso");
-
+  const [user, setUser] = React.useState("");
+ 
   React.useEffect(() => {
+    if(localStorage.getItem("user") !== null){
+      setUser(localStorage.getItem("user"));
+    }
     getCategories();
   }, []);
 
@@ -66,7 +70,7 @@ const CreateOperation = () => {
   const onSubmit = (formData, e) => {
     e.preventDefault(); // evita que haga refresh
     // charge data in operation object
-    operation.userEmail = "clau@gmail.com";
+    operation.userEmail = user;
     operation.concept = formData.concept;
     operation.amount = formData.amount;
     operation.date = date;

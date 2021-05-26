@@ -51,10 +51,6 @@ const SignUp = () => {
 
   async function checkUser(email) {
     console.log("value: " + email);
-    // fetch(`http://localhost:4000/api/users/ckeck/${email}`).then((res) =>
-    //   console.log(res)
-    // );
-
     try {
       const result = await axios
         .get(`http://localhost:4000/api/users/check/${email}`)
@@ -70,28 +66,6 @@ const SignUp = () => {
       console.log("Error al ckeckear email de usuario");
     }
   }
-
-  // const checkUser = async (value) => {
-  //   //console.log(e.target.value);
-  //   console.log(value);
-  //   //const deb = debounce(() => setEmail(e.target.value), 3000);
-  //   //deb();
-
-  //   try {
-  //     const result = await axios
-  //       .get(`http://localhost:4000/api/users/ckeck/${value}`)
-  //       .then((res) => {
-  //         if(res){
-  //           console.log('YA EXISTE UN USUARIO CON EL MISMO EMAIL')
-  //         }else{
-  //           console.log('EMAIL ACEPTADO')
-  //         }
-  //       });
-
-  //   } catch (e) {
-  //     console.log("Error al ckeckear email de usuario");
-  //   }
-  // };
 
   const onSubmit = async (data, e) => {
     e.preventDefault();
