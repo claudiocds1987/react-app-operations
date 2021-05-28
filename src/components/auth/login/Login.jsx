@@ -53,13 +53,12 @@ const Login = () => {
       const result = await axios
         .post("http://localhost:4000/api/auth/login", data)
         .then((res) => {
-          // desaparece spinner/loader
-          setLoading(true);
           const email = data.email; // value del input email
           localStorage.setItem("user", email);
           window.location.reload(history.push("/home"));         
         });
     } catch (e) {
+      setLoading(false);
       alert("Error login de usuario");
     }
 

@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import { Redirect, useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom"
 
 function Protected(props){
     let Cmp = props.Cmp;
@@ -17,14 +17,5 @@ function Protected(props){
         </div>    
     );
 }
-
-// function Profile({authorized}){
-//     if(!authorized){
-//         return <Redirect to="login" />
-//     }
-//     else{
-//         return <Redirect to="home" />
-//     }
-// }
 
 export default Protected;

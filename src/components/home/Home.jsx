@@ -1,9 +1,15 @@
 import React from "react";
 // axios
 import axios from "axios";
+// npm i lodash desinstalarla
+//import _ from "lodash";
+
+// React pagination npm i react-paginate
+import ReactPaginate from "react-paginate";
+
 import { Table, Form, Spinner } from "react-bootstrap";
 // npm install react-router-dom
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 // npm install moment --save to format date
 import moment from "moment";
 // fontawesome
@@ -16,6 +22,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "./Home.css";
 // services
 import OperationsService from "./../../services/operationsService"
+import CategoryService from "./../../services/categoryService";
 
 const Home = () => {
   const currentDate = new Date();
@@ -28,27 +35,41 @@ const Home = () => {
   const [checkDate, setCheckDate] = React.useState(false);
   const [date1, setDate1] = React.useState(new Date());
   const [date2, setDate2] = React.useState(new Date());
+  // para el Spinner/loader
   const [loading, setLoading] = React.useState(false);
+    // ******************* pagination ***************************
+    // const [pageNumber, setPageNumber] = React.useState(0);
+    // const itemsPerPage = 7;
+    // const pagesVisited = pageNumber * itemsPerPage;
+    // const displayItems = stateOperations
+    //   .slice(pagesVisited, pagesVisited + itemsPerPage)
+    //   .map(stateOperations => {
+
+    //   })
+    // ******************* ********** ***************************
+  let operationsService = new OperationsService();
+  let categoryService = new CategoryService();
   let history = useHistory();
   let cont = 1;
   let user = '';
-
+  
   React.useEffect(() => {
     if(localStorage.getItem("user") !== null){
       user = localStorage.getItem('user');
-    }
-    getOperations();
-    getCategories();
+      getOperations();
+      getCategories();
+    }   
   }, []);
 
   const getCategories = async () => {
-    const data = await fetch("http://localhost:4000/api/categories");
-    const categoriesData = await data.json();
-    setCategories(categoriesData);
+    const data = categoryService.getCategories();
+    data.then(res => {
+      setCategories(res);
+      //setLoading(true);
+    }) 
   };
 
   const getOperations = async () => {
-    let operationsService = new OperationsService();
     const data = operationsService.getOperationsByUser(user);
     data.then(res => {
       console.log(res);
@@ -56,22 +77,6 @@ const Home = () => {
       setStateFilter(res);
       setLoading(true);
     })
-    //setLoading(true);
-    // data.then(res => console.log(res));
-    //console.log(data);
-    // try {
-    //   const data = await axios
-    //   .get(`http://localhost:4000/api/operations/user/${user}`)
-    //     // .get("http://localhost:4000/api/operations/user/clau@gmail.com")
-    //     .then((res) => {
-    //      // console.log(res);
-    //       setStateOperations(res.data);
-    //       setStateFilter(res.data);
-    //     });
-    //   setLoading(true);
-    // } catch (e) {
-    //   alert("Error al intentar obtener las operaciones");
-    // }
   };
 
   const filter = () => {
@@ -321,6 +326,24 @@ const Home = () => {
             ))}
           </tbody>
         </Table>
+        {/* <nav className="d-flex justify-content-center">
+          <ul className="pagination">
+            {
+              paginated.map((page) => (
+                <li className={
+                  page === currentPage? "page-item active":"page-item"
+                }>
+                  <p className="page-link"
+                    onClick={() => pagination(page)}
+                  >
+                    {page}
+                  </p>
+                  
+                </li>
+              ))
+            }      
+          </ul>
+        </nav> */}
       </div>
     </div>
   );

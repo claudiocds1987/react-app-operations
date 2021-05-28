@@ -55,7 +55,9 @@ const Header = () => {
             :
             ""
           }
-          <Nav>
+          {
+            user !== "" ?
+            <Nav>
             
             <Link className="nav-link" to="/home" style={{ color: "#FFF" }}>
               <FontAwesomeIcon
@@ -90,6 +92,9 @@ const Header = () => {
               Login
             </Link>
           </Nav>
+            :
+            ""
+          }
         </Navbar.Collapse>
       </Container>
     </Navbar>

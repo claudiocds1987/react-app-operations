@@ -50,7 +50,7 @@ const CreateOperation = () => {
   const [type, setType] = React.useState("ingreso");
   const [user, setUser] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-
+  
   React.useEffect(() => {
     if(localStorage.getItem("user") !== null){
       setUser(localStorage.getItem("user"));

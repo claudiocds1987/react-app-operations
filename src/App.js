@@ -1,7 +1,6 @@
 import React from "react";
 import "./App.css";
-//import "./components/auth/Login.css"
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "bootstrap/dist/css/bootstrap.min.css"; esta importando en index.js
 // components
 import Protected from "./components/auth/Protected"
 import Header from "./components/header/Header";
@@ -34,7 +33,9 @@ function App() {
         {/* <Route exact path="/home" component={Home}></Route> */}
         
 
-        <Route path="/createOperation" component={CreateOperation}></Route>
+        <Route path="/createOperation">
+          <Protected Cmp={CreateOperation} />
+        </Route>
         <Route path="/editOperation/:id" component={EditOperation}></Route>
         <Route path="/login" component={Login}></Route>
         <Route path="/signup" component={SignUp}></Route>
