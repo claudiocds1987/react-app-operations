@@ -21,10 +21,11 @@ import "react-datepicker/dist/react-datepicker.css";
 // css
 import "./Home.css";
 // services
-import OperationsService from "./../../services/operationsService"
+import OperationsService from "./../../services/operationsService";
 import CategoryService from "./../../services/categoryService";
 
 const Home = () => {
+  let cont = 1;
   const currentDate = new Date();
   const [categories, setCategories] = React.useState([]);
   const [stateFilter, setStateFilter] = React.useState([]);
@@ -37,46 +38,41 @@ const Home = () => {
   const [date2, setDate2] = React.useState(new Date());
   // para el Spinner/loader
   const [loading, setLoading] = React.useState(false);
-    // ******************* pagination ***************************
-    // const [pageNumber, setPageNumber] = React.useState(0);
-    // const itemsPerPage = 7;
-    // const pagesVisited = pageNumber * itemsPerPage;
-    // const displayItems = stateOperations
-    //   .slice(pagesVisited, pagesVisited + itemsPerPage)
-    //   .map(stateOperations => {
-
-    //   })
-    // ******************* ********** ***************************
+  // ******************* pagination ***************************
+  const [pageNumber, setPageNumber] = React.useState(0);
+  const itemsPerPage = 7;
+  const pagesVisited = pageNumber * itemsPerPage;
+  const pageCount = Math.ceil(stateFilter.length / itemsPerPage);
+  // ******************* ********** ***************************
   let operationsService = new OperationsService();
   let categoryService = new CategoryService();
   let history = useHistory();
-  let cont = 1;
-  let user = '';
-  
+  let user = "";
+
   React.useEffect(() => {
-    if(localStorage.getItem("user") !== null){
-      user = localStorage.getItem('user');
+    if (localStorage.getItem("user") !== null) {
+      user = localStorage.getItem("user");
       getOperations();
       getCategories();
-    }   
+    }
   }, []);
 
   const getCategories = async () => {
     const data = categoryService.getCategories();
-    data.then(res => {
+    data.then((res) => {
       setCategories(res);
       //setLoading(true);
-    }) 
+    });
   };
 
   const getOperations = async () => {
     const data = operationsService.getOperationsByUser(user);
-    data.then(res => {
+    data.then((res) => {
       console.log(res);
       setStateOperations(res);
       setStateFilter(res);
       setLoading(true);
-    })
+    });
   };
 
   const filter = () => {
@@ -194,9 +190,46 @@ const Home = () => {
     }
   };
 
+  // **************************************************************************
+  // const displayItems = stateFilter
+  // .slice(pagesVisited, pagesVisited + itemsPerPage)
+  // .map((item) => {
+  //   <tr key={cont++} className="text-center align-middle">
+  //     <td>{moment(item.date).format("DD/MM/YYYY")}</td>
+  //     <td>{item.concept}</td>
+  //     <td>{item.amount}</td>
+  //     <td>{item.type}</td>
+  //     <td>{item.category}</td>
+  //     <div className="text-center">
+  //       <button
+  //         className="btn btn-primary"
+  //         //to="/EditOperation"
+  //         onClick={() => {
+  //           history.push(`/editOperation/${item.id_operation}`);
+  //         }}
+  //       >
+  //         <FontAwesomeIcon icon={faEdit} />
+  //       </button>
+  //       <button
+  //         className="btn btn-danger"
+  //         onClick={() => {
+  //           Delete(item.id_operation);
+  //         }}
+  //       >
+  //         <FontAwesomeIcon icon={faTrash} />
+  //       </button>
+  //     </div>
+  //   </tr>;
+  // });
+  // *************************************************************************
+
+  // "selected" is a variable native from react-paginate
+  const changePage = ({ selected }) => {
+    setPageNumber(selected);
+  };
+
   return (
     <div className="container">
-     
       {loading ? setStateFilter : <Spinner animation="border" />}
 
       <div id="filter-container">
@@ -296,54 +329,51 @@ const Home = () => {
             </tr>
           </thead>
           <tbody>
-            {stateFilter.map((item) => (
-              <tr key={cont++} className="text-center align-middle">
-                <td>{moment(item.date).format("DD/MM/YYYY")}</td>
-                <td>{item.concept}</td>
-                <td>{item.amount}</td>
-                <td>{item.type}</td>
-                <td>{item.category}</td>
-                <div className="text-center">
-                  <button 
-                    className="btn btn-primary"
-                    //to="/EditOperation" 
-                    onClick={() => {
-                      history.push(`/editOperation/${item.id_operation}`);
-                    }}
+            {stateFilter
+              .slice(pagesVisited, pagesVisited + itemsPerPage)
+              .map((item) => (
+                <tr key={cont++} className="text-center align-middle">
+                  <td>{moment(item.date).format("DD/MM/YYYY")}</td>
+                  <td>{item.concept}</td>
+                  <td>{item.amount}</td>
+                  <td>{item.type}</td>
+                  <td>{item.category}</td>
+                  <div className="text-center">
+                    <button
+                      className="btn btn-primary"
+                      //to="/EditOperation"
+                      onClick={() => {
+                        history.push(`/editOperation/${item.id_operation}`);
+                      }}
                     >
-                    <FontAwesomeIcon icon={faEdit} />
-                  </button>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => {
-                      Delete(item.id_operation);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
-                </div>
-              </tr>
-            ))}
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => {
+                        Delete(item.id_operation);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </div>
+                </tr>
+              ))}
           </tbody>
         </Table>
-        {/* <nav className="d-flex justify-content-center">
-          <ul className="pagination">
-            {
-              paginated.map((page) => (
-                <li className={
-                  page === currentPage? "page-item active":"page-item"
-                }>
-                  <p className="page-link"
-                    onClick={() => pagination(page)}
-                  >
-                    {page}
-                  </p>
-                  
-                </li>
-              ))
-            }      
-          </ul>
-        </nav> */}
+        <div className="d-flex justify-content-center">
+          <ReactPaginate
+            previousLabel={"Previous"}
+            nextLabel={"Next"}
+            pageCount={pageCount}
+            onPageChange={changePage}
+            containerClassName={"paginationBttns"}
+            previousLinkClassName={"previousBttn"}
+            nextLinkClassName={"nextBttn"}
+            disabledClassName={"paginationDisabled"}
+            activeClassName={"paginationActive"}
+          />
+        </div>
       </div>
     </div>
   );

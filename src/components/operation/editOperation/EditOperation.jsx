@@ -37,7 +37,6 @@ const operation = {
 };
 
 const EditOperation = () => {
-  
   const currentDate = new Date();
   const [stateCategories, setStateCategories] = React.useState([]);
   const [idCategory, setIdCategory] = React.useState("");
@@ -58,10 +57,9 @@ const EditOperation = () => {
     if (localStorage.getItem("user") !== null) {
       setUser(localStorage.getItem("user"));
       getOperation();
-    }   
+    }
   }, []);
 
-  
   const getOperation = () => {
     const data = operationService.getOperation(id);
     data.then((res) => {
@@ -82,7 +80,7 @@ const EditOperation = () => {
       //       console.log("Nombre de categoria: " + item.name);
       //       setCatName(item.name);
       //     }
-      //   }); 
+      //   });
       //   // in this way i fix the problem about having the two categories repeated in <select>
       //   // returning the objects with the condition
       //   const result = categories.filter(function (obj) {
@@ -117,6 +115,8 @@ const EditOperation = () => {
     });
   };
 
+  
+
   const {
     register,
     handleSubmit,
@@ -125,6 +125,7 @@ const EditOperation = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
 
   const onSubmit = (formData, e) => {
     e.preventDefault(); // evita que haga refresh
@@ -136,7 +137,7 @@ const EditOperation = () => {
     operation.category = idCategory;
     operation.type = type;
 
-    console.log('antes de editar: ' + operation.category);
+    console.log("antes de editar: " + operation.category);
     reset(); // reset viene del useForm
 
     // PUT con axios
@@ -164,7 +165,6 @@ const EditOperation = () => {
         <div className="col-md-5 mt-5">
           <div className="card p-4">
             <div className="card-body">
-              
               <h5 className="text-center mb-3">EDIT OPERATION</h5>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="d-flex align-items-center">
@@ -261,7 +261,10 @@ const EditOperation = () => {
                 </div>
 
                 <div className="d-grid gap-2">
-                  <button type="submit" className="btn btn-primary mt-5">
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary mt-5"
+                  >
                     Editar
                   </button>
                 </div>

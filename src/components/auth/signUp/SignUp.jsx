@@ -27,16 +27,19 @@ const schema = yup.object().shape({
     .min(5, "La contraseña es corta")
     .max(15, "contraseña muy larga"),
   confirmPassword: yup
-    .string()
-    .required("Campo obligatorio")
-    .min(5, "La contraseña es corta")
-    .max(15, "contraseña muy larga"),
+  .string().oneOf([yup.ref('password'), null], 'Las contraseñas deben ser iguales')
+  .required('Confirme la contraseña'),
+    // .string()
+    // .required("Campo obligatorio")
+    // .min(5, "La contraseña es corta")
+    // .max(15, "contraseña muy larga"),
 });
 
 const SignUp = () => {
   let history = useHistory();
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [userExist, setUserExist] = React.useState(false);
   //const [email, setEmail] = React.useState();
 
   const {
@@ -56,10 +59,13 @@ const SignUp = () => {
         .get(`http://localhost:4000/api/users/check/${email}`)
         // .then(res => console.log(res.data))
         .then((res) => {
+          // res.data tiene true or false
           if (res.data) {
             console.log("YA EXISTE UN USUARIO CON EL MISMO EMAIL");
+            setUserExist(true)
           } else {
             console.log("EMAIL ACEPTADO");
+            setUserExist(false);
           }
         });
     } catch (e) {
@@ -105,13 +111,17 @@ const SignUp = () => {
             name="email"
             {...register("email")}
             placeholder="@email"
-            className="form-control"
-            // onChange={checkUser}
+            className={`form-control ${errors.email ? 'is-invalid' : ''}`}
             onChange={(e) => debounceOnChange(e.target.value)}
-          />
+          />    
         </div>
 
         <p className="text-danger">{errors.email?.message}</p>
+        {userExist ? 
+          <p className="text-danger">Ya existe el usuario</p>
+          :
+          ''
+        }
 
         <div className="d-flex align-items-center">
           <div className="icon">
@@ -122,7 +132,8 @@ const SignUp = () => {
             name="password"
             {...register("password")}
             placeholder="Contraseña"
-            className="form-control"
+            // className="form-control"
+            className={`form-control ${errors.password ? 'is-invalid' : ''}`}
             onChange={(e) => {
               const value = e.target.value;
               console.log(value);
@@ -142,7 +153,7 @@ const SignUp = () => {
             name="confirmPassword"
             {...register("confirmPassword")}
             placeholder="Confirmar contraseña"
-            className="form-control"
+            className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`}
             onChange={(e) => {
               const value = e.target.value;
               console.log(value);
