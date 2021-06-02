@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 // axios
 import axios from "axios";
 // spinner loader
@@ -27,13 +27,12 @@ const schema = yup.object().shape({
 });
 
 const Login = () => {
-
   const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
     // borrando localStorage
-    localStorage.removeItem('user');
-  })
+    localStorage.removeItem("user");
+  });
 
   let history = useHistory();
 
@@ -55,18 +54,16 @@ const Login = () => {
         .then((res) => {
           const email = data.email; // value del input email
           localStorage.setItem("user", email);
-          window.location.reload(history.push("/home"));         
+          window.location.reload(history.push("/home"));
         });
     } catch (e) {
       setLoading(false);
       alert("Error login de usuario");
     }
-
   };
 
   return (
     <div id="box">
-        {loading === true ? <Spinner animation="border" /> : ""}
       <h4>LOGIN</h4>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="d-flex align-items-center">
@@ -109,6 +106,17 @@ const Login = () => {
             className="btn btn-primary mt-2"
             disabled={errors.email || errors.password}
           >
+            {loading === true ? (
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+              />
+            ) : (
+              ""
+            )}
             Login
           </button>
         </div>

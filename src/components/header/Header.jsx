@@ -81,7 +81,10 @@ const Header = () => {
               className="nav-link link"
               // to="/login"
               onClick={() => {
-                window.location.reload(history.push("/login"));
+                const confirm = window.confirm("¿Desea cerrar la sesión?");
+                if(confirm){
+                  window.location.reload(history.push("/login"));
+                }           
               }}
               style={{ color: "#FFF" }}
             >

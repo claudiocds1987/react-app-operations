@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+// npm install react-router-dom
+import { useHistory } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 // npm install react-hook-form
 import { useForm } from "react-hook-form";
@@ -21,27 +22,31 @@ import {
 import OperationsService from "./../../../services/operationsService";
 import CategoryService from "./../../../services/categoryService";
 
+//import Prueba from "./prueba"; // ??
+
 const schema = yup.object().shape({
   concept: yup.string().required("Campo obligatorio"),
   amount: yup.number().required("Campo obligatorio"),
 });
 
-const operation = {
-  userEmail: "",
-  concept: "",
-  amount: "",
-  date: "",
-  category: "",
-  type: "",
-  state: true,
-};
-
 const EditOperation = () => {
-  const currentDate = new Date();
+  //??????????????????????????????????????????????????????????????????? */
+  // const [opObject, setOpObject] = React.useState({
+  //   id_operation: "",  
+  //   userEmail: "",
+  //   concept: "",
+  //   amount: "",
+  //   date: "",
+  //   category: "",
+  //   type: "",
+  //   state: true,
+  // });
+  //??????????????????????????????????????????????????????????????????? */
+ 
   const [stateCategories, setStateCategories] = React.useState([]);
   const [idCategory, setIdCategory] = React.useState("");
-  const [date, setDate] = React.useState(new Date());
-  const [type, setType] = React.useState("ingreso");
+  const [date, setDate] = React.useState("");
+  const [type, setType] = React.useState("");
   const [user, setUser] = React.useState("");
   const [operation, setOperation] = React.useState([]);
   // para el Spinner/loader
@@ -49,6 +54,7 @@ const EditOperation = () => {
   //getting id_operation from url
   const { id } = useParams();
   const [catName, setCatName] = React.useState("");
+  let history = useHistory();
   let operationService = new OperationsService();
   let categoryService = new CategoryService();
 
@@ -63,46 +69,25 @@ const EditOperation = () => {
   const getOperation = () => {
     const data = operationService.getOperation(id);
     data.then((res) => {
-      console.log("OPERATION DATA:");
-      console.log(res);
       setOperation(res);
-      // setIdCategory(res[0].category);
-      getCategories(res[0].category);
-      /////////////////NO BORRAR HASTA QUE FUNCIONE BIEN EL EDITAR/////////////////////////////
-      // const idCat = res[0].category;
-      // const data = categoryService.getCategories();
-      // data.then((res) => {
-      //   //console.log(res);
-      //   let categories = res;
+      setType(res[0].type);
+      setDate(res[0].date);
+      // setting default values in inputs of the form
+      setValue("concept", res[0].concept);
+      setValue("amount", res[0].amount);
 
-      //   categories.forEach((item) => {
-      //     if (item.id === idCat) {
-      //       console.log("Nombre de categoria: " + item.name);
-      //       setCatName(item.name);
-      //     }
-      //   });
-      //   // in this way i fix the problem about having the two categories repeated in <select>
-      //   // returning the objects with the condition
-      //   const result = categories.filter(function (obj) {
-      //     return obj.id !== idCat;
-      //   });
-      //   setStateCategories(result);
-      //   //setLoading(true);
-      // });
-      ////////////////////////////////////////////////
+      getCategories(res[0].category);
     });
   };
 
   const getCategories = (idCategory) => {
     setIdCategory(idCategory);
     const data = categoryService.getCategories();
-    console.log("idCategory hook: " + idCategory);
     data.then((res) => {
       let categories = res;
       setStateCategories(categories);
       categories.forEach((item) => {
         if (item.id === idCategory) {
-          console.log("Nombre de categoria " + item.name);
           setCatName(item.name);
         }
       });
@@ -115,53 +100,60 @@ const EditOperation = () => {
     });
   };
 
-  
-
   const {
     register,
+    setValue,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    // defaultValues: {
+    //   concept: ""
+    //   amount: "amountDefault",
+    // }
   });
-
 
   const onSubmit = (formData, e) => {
     e.preventDefault(); // evita que haga refresh
     // charge data in operation object
-    operation.userEmail = user;
-    operation.concept = formData.concept;
-    operation.amount = formData.amount;
-    operation.date = date;
-    operation.category = idCategory;
-    operation.type = type;
+    const operation = {
+      id_operation: id,
+      userEmail: user,
+      concept: formData.concept,
+      amount: formData.amount,
+      date: date,
+      category: idCategory,
+      type: type,
+      state: true,
+    };
+    //activating spinner/loader
+    setLoading(true); 
 
-    console.log("antes de editar: " + operation.category);
-    reset(); // reset viene del useForm
-
-    // PUT con axios
-    // axios
-    //   .post("http://localhost:4000/api/operations", operation)
-    //   .then((resp) => {
-    //     alert("La operación fue guardada exitosamente!");
-    //   })
-    //   .catch((err) => {
-    //     alert("Error al intentar guardar la operación");
-    //   });
+    let operationsService = new OperationsService();
+    const data = operationsService.updateOperation(operation);
+    data.then(res => {
+      setLoading(false);
+      alert(res);
+      reset(); // reset viene del useForm
+      window.location.reload(history.push("/home"));
+    })
   };
 
   const onChangeDate = (date) => {
+    const currentDate = new Date();
     if (date > currentDate) {
       alert("No puede elegir una fecha mayor a la fecha actual");
     } else {
       setDate(date);
+      //console.log(date);
     }
   };
 
   return (
     <div className="container">
       <div className="d-flex justify-content-center">
+      {/* {loading === true ? <Spinner animation="border"/> : ""} */}
         <div className="col-md-5 mt-5">
           <div className="card p-4">
             <div className="card-body">
@@ -177,7 +169,6 @@ const EditOperation = () => {
                     {...register("concept")}
                     placeholder="Concepto..."
                     className="form-control"
-                    value={operation.map((item) => item.concept)}
                   />
                 </div>
 
@@ -197,7 +188,6 @@ const EditOperation = () => {
                     {...register("amount")}
                     placeholder="Monto"
                     className="form-control"
-                    value={operation.map((item) => item.amount)}
                   />
                 </div>
 
@@ -212,7 +202,7 @@ const EditOperation = () => {
                     <FontAwesomeIcon icon={faCalendarDay} />
                   </div>
                   <DataPicker
-                    selected={Date.parse(operation.map((item) => item.date))}
+                    selected={Date.parse(date)}
                     dateFormat="dd/MM/yyyy"
                     onChange={onChangeDate}
                     className="form-control"
@@ -224,14 +214,16 @@ const EditOperation = () => {
                   <label className="text-muted">Tipo:</label>
                   <select
                     className="form-select"
-                    value={operation.map((item) => item.type)}
                     onChange={(e) => {
                       const selectedType = e.target.value;
                       setType(selectedType);
                     }}
                   >
-                    <option value="ingreso">Ingreso</option>
-                    <option value="egreso">Egreso</option>
+                    <option selected={type}>{type}</option>
+                    {
+                      type === "egreso" ? <option value="ingreso">ingreso</option> : <option value="egreso">egreso</option>
+                    }
+                    
                   </select>
                 </div>
 
@@ -261,10 +253,18 @@ const EditOperation = () => {
                 </div>
 
                 <div className="d-grid gap-2">
-                  <button 
-                    type="submit" 
-                    className="btn btn-primary mt-5"
-                  >
+                  <button type="submit" className="btn btn-primary mt-5">
+                  {loading === true ? 
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                    /> 
+                    : 
+                    ""
+                  }
                     Editar
                   </button>
                 </div>

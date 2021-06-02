@@ -38,6 +38,17 @@ class OperationsService {
       alert("Error al guardar la operación");
     }
   }
+
+  async updateOperation(operation) {
+    try {
+      let res = await axios.put(`http://localhost:4000/api/operations/${operation.id_operation}`, operation);
+      let data = res.data;
+      return data;
+    } catch (e) {
+      alert("Error al guardar la operación");
+    }
+  }
+
 }
 
 export default OperationsService;
