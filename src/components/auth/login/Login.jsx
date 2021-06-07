@@ -16,6 +16,8 @@ import "./Login.css";
 
 // npm install react-router-dom
 import { Link, useHistory } from "react-router-dom";
+// services
+import AuthService from "./../../../services/authService";
 
 const schema = yup.object().shape({
   email: yup.string().email("formato no valido").required("campo obligatorio"),
@@ -32,6 +34,7 @@ const Login = () => {
   useEffect(() => {
     // borrando localStorage
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
   });
 
   let history = useHistory();
@@ -44,23 +47,41 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
+  // USING SERVICE
   const onSubmit = async (data, e) => {
     e.preventDefault();
+    let authService = new AuthService();
     // se activa el spinner/loader
     setLoading(true);
-    try {
-      const result = await axios
-        .post("http://localhost:4000/api/auth/login", data)
-        .then((res) => {
-          const email = data.email; // value del input email
-          localStorage.setItem("user", email);
-          window.location.reload(history.push("/home"));
-        });
-    } catch (e) {
-      setLoading(false);
-      alert("Error login de usuario");
-    }
+    const result = await authService.login(data);
+    const token = result.token;
+    const email = result.email;
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", email);
+    window.location.reload(history.push("/home"));
   };
+
+  // sin service
+  // const onSubmit = async (data, e) => {
+  //   e.preventDefault();
+  //   // se activa el spinner/loader
+  //   setLoading(true);
+  //   try {
+  //     const result = await axios
+  //       .post("http://localhost:4000/api/auth/login", data)
+  //       .then((res) => {
+  //         const email = data.email; // value del input email
+  //         const token = res.data.token;
+  //         // alert('TOKEN: ' + token);
+  //         localStorage.setItem("token", token);
+  //         localStorage.setItem("user", email);
+  //         window.location.reload(history.push("/home"));
+  //       });
+  //   } catch (e) {
+  //     setLoading(false);
+  //     alert("Error login de usuario");
+  //   }
+  // };
 
   return (
     <div id="box">

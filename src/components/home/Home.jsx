@@ -9,7 +9,7 @@ import ReactPaginate from "react-paginate";
 
 import { Table, Form, Spinner } from "react-bootstrap";
 // npm install react-router-dom
-import { useHistory } from "react-router-dom";
+import { useHistory, useRouteMatch } from "react-router-dom";
 // npm install moment --save to format date
 import moment from "moment";
 // fontawesome
@@ -58,21 +58,27 @@ const Home = () => {
   }, []);
 
   const getCategories = async () => {
-    const data = categoryService.getCategories();
-    data.then((res) => {
-      setCategories(res);
-      //setLoading(true);
-    });
+    const data = await categoryService.getCategories();
+    setCategories(data);
+    setLoading(true);
+    // data.then((res) => {
+    //   setCategories(res);
+    //   //setLoading(true);
+    // });
   };
 
   const getOperations = async () => {
-    const data = operationsService.getOperationsByUser(user);
-    data.then((res) => {
-      console.log(res);
-      setStateOperations(res);
-      setStateFilter(res);
-      setLoading(true);
-    });
+    const data = await operationsService.getOperationsByUser(user);
+    setStateOperations(data);
+    setStateFilter(data);
+    setLoading(true);
+    // const data = operationsService.getOperationsByUser(user);
+    // data.then((res) => {
+    //   console.log(res);
+    //   setStateOperations(res);
+    //   setStateFilter(res);
+    //   setLoading(true);
+    // });
   };
 
   const filter = () => {
@@ -176,52 +182,17 @@ const Home = () => {
   const Delete = async (id_operation) => {
     const confirm = window.confirm("¿Realmente quiere eliminar la operación?");
     if (confirm) {
-      try {
-        const data = await axios
-          .put(`http://localhost:4000/api/operations/delete/${id_operation}`)
-          .then((res) => {
-            alert("La operación fue eliminada");
-            getOperations();
-          });
-        setLoading(true);
-      } catch (e) {
-        alert("Error al eliminar la operación");
-      }
+      const data = await operationsService.deleteOperation(id_operation);
+      alert(data);
+      // quito la operacion eliminada en operations
+      const result = stateOperations.filter(function (obj) {
+        return obj.id_operation !== id_operation;
+      });
+      // seteando el estado de operations y stateFilter
+      setStateOperations(result);
+      setStateFilter(result);
     }
   };
-
-  // **************************************************************************
-  // const displayItems = stateFilter
-  // .slice(pagesVisited, pagesVisited + itemsPerPage)
-  // .map((item) => {
-  //   <tr key={cont++} className="text-center align-middle">
-  //     <td>{moment(item.date).format("DD/MM/YYYY")}</td>
-  //     <td>{item.concept}</td>
-  //     <td>{item.amount}</td>
-  //     <td>{item.type}</td>
-  //     <td>{item.category}</td>
-  //     <div className="text-center">
-  //       <button
-  //         className="btn btn-primary"
-  //         //to="/EditOperation"
-  //         onClick={() => {
-  //           history.push(`/editOperation/${item.id_operation}`);
-  //         }}
-  //       >
-  //         <FontAwesomeIcon icon={faEdit} />
-  //       </button>
-  //       <button
-  //         className="btn btn-danger"
-  //         onClick={() => {
-  //           Delete(item.id_operation);
-  //         }}
-  //       >
-  //         <FontAwesomeIcon icon={faTrash} />
-  //       </button>
-  //     </div>
-  //   </tr>;
-  // });
-  // *************************************************************************
 
   // "selected" is a variable native from react-paginate
   const changePage = ({ selected }) => {
@@ -316,9 +287,9 @@ const Home = () => {
           <thead>
             <tr className="text-center">
               <th>
-                <button id="btn-refreshTable">
-                  <FontAwesomeIcon icon={faSyncAlt} onClick={getOperations} />
-                </button>
+                {/* <button id="btn-refreshTable">
+                  <FontAwesomeIcon icon={faSyncAlt} onClick={getOperations()} />
+                </button> */}
                 <span className="mx-2">Fecha</span>
               </th>
               <th>Concepto</th>
