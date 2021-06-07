@@ -14,7 +14,7 @@ import { useHistory, useRouteMatch } from "react-router-dom";
 import moment from "moment";
 // fontawesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEdit, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
 // npm i react-datepicker
 import DataPicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -30,6 +30,10 @@ const Home = () => {
   const [categories, setCategories] = React.useState([]);
   const [stateFilter, setStateFilter] = React.useState([]);
   const [stateOperations, setStateOperations] = React.useState([]);
+  const [incomeAmount, setIncomeAmount] = React.useState(0); // ?
+  const [expensesAmount, setExpensesAmount] = React.useState(0); // ?
+  const [showIncomeAmount, setShowIncomeAmount] = React.useState(0); // ?
+  const [showExpensesAmount, setShowExpensesAmount] = React.useState(0); // ?
   const [checkCat, setCheckCat] = React.useState(false);
   const [stateType, setStateType] = React.useState("all");
   const [stateCategory, setStateCategory] = React.useState("comida");
@@ -61,26 +65,40 @@ const Home = () => {
     const data = await categoryService.getCategories();
     setCategories(data);
     setLoading(true);
-    // data.then((res) => {
-    //   setCategories(res);
-    //   //setLoading(true);
-    // });
   };
 
   const getOperations = async () => {
     const data = await operationsService.getOperationsByUser(user);
     setStateOperations(data);
     setStateFilter(data);
+    calculateAmounts(data);
     setLoading(true);
-    // const data = operationsService.getOperationsByUser(user);
-    // data.then((res) => {
-    //   console.log(res);
-    //   setStateOperations(res);
-    //   setStateFilter(res);
-    //   setLoading(true);
-    // });
   };
 
+  const calculateAmounts = (operations) => {
+    let income = 0;
+    let expenses = 0;
+    operations.forEach(op => {
+      let num = parseInt(op.amount.toString());  
+      if(op.type === 'ingreso'){   
+        income += num;
+      }else{
+        // total amount type egreso
+        expenses += num;
+      }
+    });
+    setIncomeAmount(income);
+    setExpensesAmount(expenses);
+    setShowIncomeAmount(currencyFormat(income));
+    setShowExpensesAmount(currencyFormat(expenses));
+   
+  }
+
+  const currencyFormat = (num) => {
+    //return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    return Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS'}).format(num);
+  }
+    
   const filter = () => {
     let result;
     if (checkDate) {
@@ -179,22 +197,35 @@ const Home = () => {
     }
   };
 
-  const Delete = async (id_operation) => {
+  const Delete = async (id_operation, amountOp, typeOp) => {
     const confirm = window.confirm("¿Realmente quiere eliminar la operación?");
     if (confirm) {
       const data = await operationsService.deleteOperation(id_operation);
-      alert(data);
       // quito la operacion eliminada en operations
       const result = stateOperations.filter(function (obj) {
         return obj.id_operation !== id_operation;
       });
-      // seteando el estado de operations y stateFilter
+
+      // recalculating new IncomeAmount or expensesAmount
+      let newTotal = 0;
+      const amount = parseInt(amountOp);
+      if(typeOp === 'ingreso'){
+        newTotal = incomeAmount - amount;
+        setIncomeAmount(newTotal);
+        setShowIncomeAmount(currencyFormat(newTotal));
+      }else{
+        newTotal = expensesAmount - amount;
+        setExpensesAmount(newTotal);
+        setShowExpensesAmount(currencyFormat(newTotal));
+      }
+      // setting operations and stateFilter
       setStateOperations(result);
       setStateFilter(result);
+      alert(data);
     }
   };
 
-  // "selected" is a variable native from react-paginate
+  // "{ selected }"" is a variable native from react-paginate
   const changePage = ({ selected }) => {
     setPageNumber(selected);
   };
@@ -204,6 +235,11 @@ const Home = () => {
       {loading ? setStateFilter : <Spinner animation="border" />}
 
       <div id="filter-container">
+        <div className="d-flex justify-content-between my-2">
+          <span className="text-white">Total ingresos: {showIncomeAmount}</span>
+          <span className="text-white">Total egresos: {showExpensesAmount}</span>    
+        </div>
+          
         <div id="secondary-container">
           <div id="box-check">
             <div className="d-flex mb-3 align-items-center">
@@ -322,7 +358,7 @@ const Home = () => {
                     <button
                       className="btn btn-danger"
                       onClick={() => {
-                        Delete(item.id_operation);
+                        Delete(item.id_operation, item.amount, item.type);
                       }}
                     >
                       <FontAwesomeIcon icon={faTrash} />
