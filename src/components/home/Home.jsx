@@ -9,12 +9,12 @@ import ReactPaginate from "react-paginate";
 
 import { Table, Form, Spinner } from "react-bootstrap";
 // npm install react-router-dom
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 // npm install moment --save to format date
 import moment from "moment";
 // fontawesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faEdit, faThumbsDown, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 // npm i react-datepicker
 import DataPicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -95,7 +95,6 @@ const Home = () => {
   }
 
   const currencyFormat = (num) => {
-    //return num.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
     return Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS'}).format(num);
   }
     
@@ -235,9 +234,15 @@ const Home = () => {
       {loading ? setStateFilter : <Spinner animation="border" />}
 
       <div id="filter-container">
-        <div className="d-flex justify-content-between my-2">
-          <span className="text-white">Total ingresos: {showIncomeAmount}</span>
-          <span className="text-white">Total egresos: {showExpensesAmount}</span>    
+        <div className="d-flex justify-content-between my-3">
+          <span className="text-white text-center">
+           <FontAwesomeIcon icon={faThumbsUp} color="#5eba7d" />{" "}
+            Total ingresos: {showIncomeAmount}
+            </span>
+          <span className="text-white text-center">
+            <FontAwesomeIcon icon={faThumbsDown} color="red" />{" "}
+            Total egresos: {showExpensesAmount}
+            </span>    
         </div>
           
         <div id="secondary-container">
