@@ -2,6 +2,8 @@ import React from "react";
 import { debounce } from "lodash";
 // axios
 import axios from "axios";
+// spinner loader
+import { Spinner } from "react-bootstrap";
 // npm install react-hook-form
 import { useForm } from "react-hook-form";
 // npm install react-router-dom
@@ -18,6 +20,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 // css
 import "./SignUp.css";
+// services
+import AuthService from "./../../../services/authService";
 
 const schema = yup.object().shape({
   email: yup.string().email("formato no valido").required("campo obligatorio"),
@@ -37,10 +41,10 @@ const schema = yup.object().shape({
 
 const SignUp = () => {
   let history = useHistory();
+  const [loading, setLoading] = React.useState(false);
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [userExist, setUserExist] = React.useState(false);
-  //const [email, setEmail] = React.useState();
 
   const {
     register,
@@ -84,17 +88,26 @@ const SignUp = () => {
         password: data.password,
         registration_date: new Date(),
       };
-
-      try {
-        const result = await axios
-          .post("http://localhost:4000/api/auth/signup", user)
-          .then((res) => {
-            alert("¡Sus datos fueron guardados exitosamente!");
-            history.push("/login");
-          });
-      } catch (e) {
-        alert("Error al registrar usuario");
+      // se activa el spinner/loader
+    setLoading(true);
+    let authService = new AuthService();
+      const result = await authService.signUp(user);
+      if(result !== undefined){
+        alert("¡Sus datos fueron guardados exitosamente!");
+        setLoading(false);
+        history.push("/login");
       }
+      setLoading(false);
+      // try {
+      //   const result = await axios
+      //     .post("http://localhost:4000/api/auth/signup", user)
+      //     .then((res) => {
+      //       alert("¡Sus datos fueron guardados exitosamente!");
+      //       history.push("/login");
+      //     });
+      // } catch (e) {
+      //   alert("Error al registrar usuario");
+      // }
     }
   };
 
@@ -142,7 +155,7 @@ const SignUp = () => {
           />
         </div>
 
-        <p className="text-danger">{errors.confirmPassword?.message}</p>
+        <p className="text-danger">{errors.password?.message}</p>
 
         <div className="d-flex align-items-center">
           <div className="icon">
@@ -170,6 +183,17 @@ const SignUp = () => {
             className="btn btn-primary mt-2"
             // disabled={errors.email || errors.password}
           >
+            {loading === true ? (
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+              />
+            ) : (
+              ""
+            )}
             Registrarse
           </button>
         </div>

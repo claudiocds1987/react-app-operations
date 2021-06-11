@@ -1,6 +1,4 @@
 import React, { useEffect } from "react";
-// axios
-import axios from "axios";
 // spinner loader
 import { Spinner } from "react-bootstrap";
 // npm install react-hook-form
