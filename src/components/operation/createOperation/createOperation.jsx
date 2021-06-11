@@ -11,19 +11,18 @@ import * as yup from "yup";
 // npm i react-datepicker
 import DataPicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+// "Currency mask" npm i react-currency-input-field 
+import CurrencyInput from "react-currency-input-field";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPen,
   faHandHoldingUsd,
-  faCalendarDay
+  faCalendarDay,
 } from "@fortawesome/free-solid-svg-icons";
 
 // css
 import "./createOperation.css";
-
-// components
-//import OperationsList from "../operationsList/OperationsList";
 
 // services
 import OperationsService from "./../../../services/operationsService";
@@ -52,9 +51,9 @@ const CreateOperation = () => {
   const [user, setUser] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   let history = useHistory();
-  
+
   React.useEffect(() => {
-    if(localStorage.getItem("user") !== null){
+    if (localStorage.getItem("user") !== null) {
       setUser(localStorage.getItem("user"));
     }
     getCategories();
@@ -87,15 +86,17 @@ const CreateOperation = () => {
     operation.type = type;
     let operationsService = new OperationsService();
     const data = operationsService.createOperation(operation);
-    data.then(res => {
+    data.then((res) => {
       setLoading(false);
-      const confirm = window.confirm("¡La operación fue guardada exitosamente!. ¿Desea agregar otra operación?");
-      if(!confirm){
+      const confirm = window.confirm(
+        "¡La operación fue guardada exitosamente!. ¿Desea agregar otra operación?"
+      );
+      if (!confirm) {
         window.location.reload(history.push("/home"));
-      }else{
+      } else {
         reset(); // reset form viene del useForm
       }
-    })
+    });
   };
 
   const onChangeDate = (date) => {
@@ -109,7 +110,6 @@ const CreateOperation = () => {
   return (
     <div className="container">
       <div className="d-flex justify-content-center">
-      
         <div className="col-md-5 mt-5">
           <div className="card p-4">
             <div className="card-body">
@@ -129,9 +129,8 @@ const CreateOperation = () => {
                 </div>
 
                 <p className="text-center">
-                  <span 
-                    className="small text-danger">
-                      {errors.concept?.message}
+                  <span className="small text-danger">
+                    {errors.concept?.message}
                   </span>
                 </p>
 
@@ -139,12 +138,25 @@ const CreateOperation = () => {
                   <div className="icon">
                     <FontAwesomeIcon icon={faHandHoldingUsd} />
                   </div>
-                  <input
+                  {/* <input
                     type="text"
                     name="amount"
                     {...register("amount")}
                     placeholder="Monto"
                     className="form-control"
+                  /> */}
+                  <CurrencyInput
+                    id="input-example"
+                    name="amount"
+                    {...register("amount")}
+                    placeholder="$"
+                    // defaultValue={800}
+                    allowNegativeValue={false}
+                    decimalSeparator="," 
+                    groupSeparator="."
+                    decimalsLimit={2}
+                    className="form-control"
+                    onValueChange={(value, name) => console.log(value, name)}
                   />
                 </div>
 
@@ -183,7 +195,7 @@ const CreateOperation = () => {
                 </div>
 
                 <div className="d-flex align-items-center mt-3">
-                <label className="text-muted">Categoria:</label>
+                  <label className="text-muted">Categoria:</label>
                   <select
                     className="form-select"
                     onChange={(e) => {
@@ -201,17 +213,17 @@ const CreateOperation = () => {
 
                 <div className="d-grid gap-2">
                   <button type="submit" className="btn btn-primary mt-5">
-                  {loading === true ? 
-                    <Spinner
-                      as="span"
-                      animation="border"
-                      size="sm"
-                      role="status"
-                      aria-hidden="true"
-                    /> 
-                    : 
-                    ""
-                  }
+                    {loading === true ? (
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      ""
+                    )}
                     Save
                   </button>
                 </div>
@@ -220,9 +232,6 @@ const CreateOperation = () => {
             </div>
           </div>
         </div>
-        {/* <div className="col-md-7 mt-5">
-          <OperationsList categories={stateCategories} />
-        </div> */}
       </div>
     </div>
   );
