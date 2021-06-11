@@ -13,6 +13,8 @@ import DataPicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 // "Currency mask" npm i react-currency-input-field 
 import CurrencyInput from "react-currency-input-field";
+// npm install moment --save to format date
+import moment from "moment";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -27,10 +29,13 @@ import "./createOperation.css";
 // services
 import OperationsService from "./../../../services/operationsService";
 
-const schema = yup.object().shape({
-  concept: yup.string().required("Campo obligatorio"),
-  amount: yup.number().required("Campo obligatorio"),
-});
+// const schema = yup.object().shape({
+//   concept: yup.string().required("Campo obligatorio"),
+//   amount: yup.number().required("Campo obligatorio"),
+//   dateOp: yup.string().required(),
+//   typeOp:yup.string().required(),
+//   categoryOp: yup.string().required(),
+// });
 
 const operation = {
   userEmail: "",
@@ -52,6 +57,28 @@ const CreateOperation = () => {
   const [loading, setLoading] = React.useState(false);
   let history = useHistory();
 
+  // React.useEffect(() => {
+  //   if (localStorage.getItem("user") !== null) {
+  //     setUser(localStorage.getItem("user"));
+  //   }
+  //   getCategories();
+  // }, []);
+
+  const getCategories = async () => {
+    const data = await fetch("http://localhost:4000/api/categories");
+    const categoriesData = await data.json();
+    setStateCategories(categoriesData);
+  };
+
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   reset,
+  //   formState: { errors },
+  // } = useForm({
+  //   resolver: yupResolver(schema),
+  // });
+
   React.useEffect(() => {
     if (localStorage.getItem("user") !== null) {
       setUser(localStorage.getItem("user"));
@@ -59,11 +86,14 @@ const CreateOperation = () => {
     getCategories();
   }, []);
 
-  const getCategories = async () => {
-    const data = await fetch("http://localhost:4000/api/categories");
-    const categoriesData = await data.json();
-    setStateCategories(categoriesData);
-  };
+  const schema = yup.object().shape({
+    concept: yup.string().required("Campo obligatorio"),
+    amount: yup.number().required("Campo obligatorio"),
+    dateOp: yup.string().default(moment(date).format("MM/DD/YYYY")).required(),
+    typeOp:yup.string().default(type).required(),
+    // por default(1) = al id de "comida"
+    categoryOp: yup.number().default(1).required(),
+  });
 
   const {
     register,
@@ -175,13 +205,20 @@ const CreateOperation = () => {
                     dateFormat="dd/MM/yyyy"
                     onChange={onChangeDate}
                     className="form-control"
-                    name="date"
+                    name="dateOp"
                   />
                 </div>
+
+                <p className="">
+                  <span className="small text-danger">
+                    {errors.dateOp?.message}
+                  </span>
+                </p> 
 
                 <div className="d-flex align-items-center mt-3">
                   <label className="text-muted">Tipo:</label>
                   <select
+                    name="typeOp"
                     className="form-select"
                     value={type}
                     onChange={(e) => {
@@ -194,9 +231,16 @@ const CreateOperation = () => {
                   </select>
                 </div>
 
+                <p className="text-center">
+                  <span className="small text-danger">
+                    {errors.typeOp?.message}
+                  </span>
+                </p>
+
                 <div className="d-flex align-items-center mt-3">
                   <label className="text-muted">Categoria:</label>
                   <select
+                    name="categoryOp"
                     className="form-select"
                     onChange={(e) => {
                       const selectedCategory = e.target.value;
@@ -210,6 +254,12 @@ const CreateOperation = () => {
                     ))}
                   </select>
                 </div>
+
+                <p className="text-center">
+                  <span className="small text-danger">
+                    {errors.categoryOp?.message}
+                  </span>
+                </p>
 
                 <div className="d-grid gap-2">
                   <button type="submit" className="btn btn-primary mt-5">
