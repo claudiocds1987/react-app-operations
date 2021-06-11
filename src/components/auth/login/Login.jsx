@@ -54,11 +54,15 @@ const Login = () => {
     // se activa el spinner/loader
     setLoading(true);
     const result = await authService.login(data);
-    const token = result.token;
-    const email = result.email;
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", email);
-    window.location.reload(history.push("/home"));
+    if(result !== undefined){
+      const token = result.token;
+      const email = result.email;
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", email);
+      window.location.reload(history.push("/home"));
+    }
+    setLoading(false);
+    
   };
 
   // sin service

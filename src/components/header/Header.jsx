@@ -31,7 +31,7 @@ const Header = () => {
       <Container>
         <img src="https://logobly.com/wp-content/uploads/001-rocket-1.png" />
         <Link to="/home" style={{ color: "#FFF" }} className="navbar-brand">
-          Operations App
+          Operations
         </Link>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">

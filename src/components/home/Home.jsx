@@ -53,13 +53,13 @@ const Home = () => {
   let history = useHistory();
   let user = "";
 
-  React.useEffect(() => {
-    if (localStorage.getItem("user") !== null) {
-      user = localStorage.getItem("user");
-      getOperations();
-      getCategories();
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   if (localStorage.getItem("user") !== null) {
+  //     user = localStorage.getItem("user");
+  //     getOperations();
+  //     getCategories();
+  //   }
+  // }, []);
 
   const getCategories = async () => {
     const data = await categoryService.getCategories();
@@ -79,7 +79,8 @@ const Home = () => {
     let income = 0;
     let expenses = 0;
     operations.forEach(op => {
-      let num = parseInt(op.amount.toString());  
+      let num = parseFloat(op.amount.toString());  
+      // let num = parseInt(op.amount.toString());  // !
       if(op.type === 'ingreso'){   
         income += num;
       }else{
@@ -91,7 +92,6 @@ const Home = () => {
     setExpensesAmount(expenses);
     setShowIncomeAmount(currencyFormat(income));
     setShowExpensesAmount(currencyFormat(expenses));
-   
   }
 
   const currencyFormat = (num) => {
@@ -207,7 +207,7 @@ const Home = () => {
 
       // recalculating new IncomeAmount or expensesAmount
       let newTotal = 0;
-      const amount = parseInt(amountOp);
+      const amount = parseFloat(amountOp);
       if(typeOp === 'ingreso'){
         newTotal = incomeAmount - amount;
         setIncomeAmount(newTotal);
@@ -229,6 +229,14 @@ const Home = () => {
     setPageNumber(selected);
   };
 
+  React.useEffect(() => {
+    if (localStorage.getItem("user") !== null) {
+      user = localStorage.getItem("user");
+      getOperations();
+      getCategories();
+    }
+  }, []);
+
   return (
     <div className="container">
       {loading ? setStateFilter : <Spinner animation="border" />}
@@ -238,11 +246,11 @@ const Home = () => {
           <span className="text-white text-center">
            <FontAwesomeIcon icon={faThumbsUp} color="#5eba7d" />{" "}
             Total ingresos: {showIncomeAmount}
-            </span>
+          </span>
           <span className="text-white text-center">
             <FontAwesomeIcon icon={faThumbsDown} color="red" />{" "}
             Total egresos: {showExpensesAmount}
-            </span>    
+          </span>
         </div>
           
         <div id="secondary-container">
@@ -328,9 +336,6 @@ const Home = () => {
           <thead>
             <tr className="text-center">
               <th>
-                {/* <button id="btn-refreshTable">
-                  <FontAwesomeIcon icon={faSyncAlt} onClick={getOperations()} />
-                </button> */}
                 <span className="mx-2">Fecha</span>
               </th>
               <th>Concepto</th>
